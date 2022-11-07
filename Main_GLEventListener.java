@@ -55,6 +55,9 @@ public class Main_GLEventListener implements GLEventListener {
     GL3 gl = drawable.getGL().getGL3();
     light.dispose(gl);
     floor.dispose(gl);
+    backWall.dispose(gl);
+    leftWall.dispose(gl);
+    rightWall.dispose(gl);
     sphere.dispose(gl);
     cube.dispose(gl);
     cube2.dispose(gl);
@@ -122,7 +125,7 @@ public class Main_GLEventListener implements GLEventListener {
 
   private Camera camera;
   private Mat4 perspective;
-  private Model floor, sphere, cube, cube2;
+  private Model floor, backWall, leftWall, rightWall, sphere, cube, cube2;
   private Light light;
   private SGNode robotRoot;
   
@@ -148,6 +151,32 @@ public class Main_GLEventListener implements GLEventListener {
     Material material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 32.0f);
     Mat4 modelMatrix = Mat4Transform.scale(16,1f,16);
     floor = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId0);
+
+    mesh = new Mesh(gl, TwoTriangles.vertices.clone(), TwoTriangles.indices.clone());
+    shader = new Shader(gl, "vs_tt_05.txt", "fs_tt_05.txt");
+    material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 32.0f);
+    modelMatrix = Mat4Transform.scale(16,1f,16);
+    modelMatrix = Mat4.multiply(Mat4Transform.rotateAroundX(90), modelMatrix);
+    modelMatrix = Mat4.multiply(Mat4Transform.translate(0,16f*0.5f,-16f*0.5f), modelMatrix);
+    backWall = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId0);
+
+    mesh = new Mesh(gl, TwoTriangles.vertices.clone(), TwoTriangles.indices.clone());
+    shader = new Shader(gl, "vs_tt_05.txt", "fs_tt_05.txt");
+    material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 32.0f);
+    modelMatrix = Mat4Transform.scale(16,1f,16);
+    modelMatrix = Mat4.multiply(Mat4Transform.rotateAroundY(90), modelMatrix);
+    modelMatrix = Mat4.multiply(Mat4Transform.rotateAroundZ(-90), modelMatrix);
+    modelMatrix = Mat4.multiply(Mat4Transform.translate(-16f*0.5f,16f*0.5f,0), modelMatrix);
+    leftWall = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId0);
+
+    mesh = new Mesh(gl, TwoTriangles.vertices.clone(), TwoTriangles.indices.clone());
+    shader = new Shader(gl, "vs_tt_05.txt", "fs_tt_05.txt");
+    material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 32.0f);
+    modelMatrix = Mat4Transform.scale(16,1f,16);
+    modelMatrix = Mat4.multiply(Mat4Transform.rotateAroundY(-90), modelMatrix);
+    modelMatrix = Mat4.multiply(Mat4Transform.rotateAroundZ(90), modelMatrix);
+    modelMatrix = Mat4.multiply(Mat4Transform.translate(16f*0.5f,16f*0.5f,0), modelMatrix);
+    rightWall = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId0);
     
     mesh = new Mesh(gl, Sphere.vertices.clone(), Sphere.indices.clone());
     shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
@@ -265,7 +294,10 @@ public class Main_GLEventListener implements GLEventListener {
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
     light.setPosition(getLightPosition());  // changing light position each frame
     light.render(gl);
-    floor.render(gl); 
+    floor.render(gl);
+    backWall.render(gl);
+    leftWall.render(gl);
+    rightWall.render(gl);
     if (animation) updateLeftArm();
     robotRoot.draw(gl);
   }
