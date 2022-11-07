@@ -7,11 +7,11 @@ import com.jogamp.opengl.util.*;
 import com.jogamp.opengl.util.awt.*;
 import com.jogamp.opengl.util.glsl.*;
   
-public class Main_GLEventListener implements GLEventListener {
+public class Hatch_GLEventListener implements GLEventListener {
   
   private static final boolean DISPLAY_SHADERS = false;
     
-  public Main_GLEventListener(Camera camera) {
+  public Hatch_GLEventListener(Camera camera) {
     this.camera = camera;
     this.camera.setPosition(new Vec3(4f,12f,18f));
   }
