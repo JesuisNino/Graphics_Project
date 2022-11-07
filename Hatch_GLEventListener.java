@@ -64,6 +64,7 @@ public class Hatch_GLEventListener implements GLEventListener {
     tableLeg3.dispose(gl);
     tableLeg4.dispose(gl);
     base.dispose(gl);
+    egg.dispose(gl);
     sphere.dispose(gl);
     cube.dispose(gl);
     cube2.dispose(gl);
@@ -131,7 +132,7 @@ public class Hatch_GLEventListener implements GLEventListener {
 
   private Camera camera;
   private Mat4 perspective;
-  private Model floor, backWall, leftWall, rightWall, sphere, base, table, tableLeg1, tableLeg2, tableLeg3, tableLeg4, cube, cube2;
+  private Model floor, backWall, leftWall, rightWall, sphere, base, egg, table, tableLeg1, tableLeg2, tableLeg3, tableLeg4, cube, cube2;
   private Light light;
   private SGNode robotRoot;
   
@@ -189,7 +190,7 @@ public class Hatch_GLEventListener implements GLEventListener {
     material = new Material(new Vec3(1.0f, 0.5f, 0.31f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 32.0f);
     modelMatrix = Mat4.multiply(Mat4Transform.scale(4,4,4), Mat4Transform.translate(0,0.5f,0));
     sphere = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId1, textureId2);
-    
+
     mesh = new Mesh(gl, Cube.vertices.clone(), Cube.indices.clone());
     shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
     material = new Material(new Vec3(1.0f, 0.5f, 0.31f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 32.0f);
@@ -199,33 +200,41 @@ public class Hatch_GLEventListener implements GLEventListener {
     cube2 = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId5, textureId6); 
 
     // table
-    float wholeHeight = 6f;
+    float wholeHeight = 5.5f;
     float tableHeight = 0.5f;
     float tableWidth = 4f;
     float tableDepth = 4f;
 
-    Mesh mc = new Mesh(gl, Cube.vertices.clone(), Cube.indices.clone());
+    mesh = new Mesh(gl, Cube.vertices.clone(), Cube.indices.clone());
     shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
     material = new Material(new Vec3(1.0f, 0.5f, 0.31f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 32.0f);
-    modelMatrix = Mat4.multiply(Mat4Transform.scale(0.5f,(wholeHeight-0.5f)/2,0.5f), Mat4Transform.translate(tableWidth-0.5f,0.5f,tableWidth-0.5f));
-    tableLeg1 = new Model(gl, camera, light, shader, material, modelMatrix, mc, textureId3, textureId4);
+    modelMatrix = Mat4.multiply(Mat4Transform.scale(0.5f,wholeHeight/2,0.5f), Mat4Transform.translate(tableWidth-0.5f,0.5f,tableWidth-0.5f));
+    tableLeg1 = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId3, textureId4);
 
-    modelMatrix = Mat4.multiply(Mat4Transform.scale(0.5f,(wholeHeight-0.5f)/2,0.5f), Mat4Transform.translate(tableWidth-0.5f,0.5f,-tableWidth+0.5f));
-    tableLeg2 = new Model(gl, camera, light, shader, material, modelMatrix, mc, textureId3, textureId4);
+    modelMatrix = Mat4.multiply(Mat4Transform.scale(0.5f,wholeHeight/2,0.5f), Mat4Transform.translate(tableWidth-0.5f,0.5f,-tableWidth+0.5f));
+    tableLeg2 = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId3, textureId4);
 
-    modelMatrix = Mat4.multiply(Mat4Transform.scale(0.5f,(wholeHeight-0.5f)/2,0.5f), Mat4Transform.translate(-tableWidth+0.5f,0.5f,tableWidth-0.5f));
-    tableLeg3 = new Model(gl, camera, light, shader, material, modelMatrix, mc, textureId3, textureId4);
+    modelMatrix = Mat4.multiply(Mat4Transform.scale(0.5f,wholeHeight/2,0.5f), Mat4Transform.translate(-tableWidth+0.5f,0.5f,tableWidth-0.5f));
+    tableLeg3 = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId3, textureId4);
 
-    modelMatrix = Mat4.multiply(Mat4Transform.scale(0.5f,(wholeHeight-0.5f)/2,0.5f), Mat4Transform.translate(-tableWidth+0.5f,0.5f,-tableWidth+0.5f));
-    tableLeg4 = new Model(gl, camera, light, shader, material, modelMatrix, mc, textureId3, textureId4);
+    modelMatrix = Mat4.multiply(Mat4Transform.scale(0.5f,wholeHeight/2,0.5f), Mat4Transform.translate(-tableWidth+0.5f,0.5f,-tableWidth+0.5f));
+    tableLeg4 = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId3, textureId4);
 
+    wholeHeight += 0.5f;
     modelMatrix = Mat4.multiply(Mat4Transform.scale(tableWidth,tableHeight,tableDepth), Mat4Transform.translate(0,wholeHeight,0));
-    table = new Model(gl, camera, light, shader, material, modelMatrix, mc, textureId3, textureId4);
+    table = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId3, textureId4);
 
-    modelMatrix = Mat4.multiply(Mat4Transform.scale(2f,tableHeight,2f), Mat4Transform.translate(0,wholeHeight+tableHeight+0.5f,0));
-    base = new Model(gl, camera, light, shader, material, modelMatrix, mc, textureId3, textureId4);
+    wholeHeight += tableHeight + 0.5f;
+    modelMatrix = Mat4.multiply(Mat4Transform.scale(2f,tableHeight,2f), Mat4Transform.translate(0, wholeHeight,0));
+    base = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId3, textureId4);
 
     // egg
+
+    mesh = new Mesh(gl, Sphere.vertices.clone(), Sphere.indices.clone());
+    shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
+    material = new Material(new Vec3(1.0f, 0.5f, 0.31f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 32.0f);
+    modelMatrix = Mat4.multiply(Mat4Transform.scale(1,1.3f,1), Mat4Transform.translate(0, 3.4f,0));
+    egg = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId3, textureId4);
 
     // robot
     
@@ -334,6 +343,7 @@ public class Hatch_GLEventListener implements GLEventListener {
     leftWall.render(gl);
     rightWall.render(gl);
     base.render(gl);
+    egg.render(gl);
     table.render(gl);
     tableLeg1.render(gl);
     tableLeg2.render(gl);
