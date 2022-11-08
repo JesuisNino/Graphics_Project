@@ -102,10 +102,10 @@ public class Hatch extends JFrame implements ActionListener {
       glEventListener.decXPosition();
     }
     else if (e.getActionCommand().equalsIgnoreCase("lowered arms")) {
-      glEventListener.loweredArms();
+      glEventListener.loweredBranchs();
     }
     else if (e.getActionCommand().equalsIgnoreCase("raised arms")) {
-      glEventListener.raisedArms();
+      glEventListener.raisedBranchs();
     }
     else if(e.getActionCommand().equalsIgnoreCase("quit"))
       System.exit(0);

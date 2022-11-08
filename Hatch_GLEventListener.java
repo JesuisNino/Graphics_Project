@@ -64,7 +64,6 @@ public class Hatch_GLEventListener implements GLEventListener {
     tableLeg3.dispose(gl);
     tableLeg4.dispose(gl);
     base.dispose(gl);
-    egg.dispose(gl);
     sphere.dispose(gl);
     cube.dispose(gl);
     cube2.dispose(gl);
@@ -104,24 +103,24 @@ public class Hatch_GLEventListener implements GLEventListener {
   }
  
   private void updateMove() {
-    robotMoveTranslate.setTransform(Mat4Transform.translate(xPosition,0,0));
-    robotMoveTranslate.update();
+    lampMoveTranslate.setTransform(Mat4Transform.translate(xPosition,0,0));
+    lampMoveTranslate.update();
   }
   
-  public void loweredArms() {
+  public void loweredBranchs() {
     stopAnimation();
-    leftArmRotate.setTransform(Mat4Transform.rotateAroundX(180));
-    leftArmRotate.update();
-    rightArmRotate.setTransform(Mat4Transform.rotateAroundX(180));
-    rightArmRotate.update();
+    Hatch_GLEventListener.this.lowerBranchRotateZ.setTransform(Mat4Transform.rotateAroundX(180));
+    Hatch_GLEventListener.this.lowerBranchRotateZ.update();
+    upperBranchRotate.setTransform(Mat4Transform.rotateAroundX(180));
+    upperBranchRotate.update();
   }
    
-  public void raisedArms() {
+  public void raisedBranchs() {
     stopAnimation();
-    leftArmRotate.setTransform(Mat4Transform.rotateAroundX(0));
-    leftArmRotate.update();
-    rightArmRotate.setTransform(Mat4Transform.rotateAroundX(0));
-    rightArmRotate.update();
+    Hatch_GLEventListener.this.lowerBranchRotateZ.setTransform(Mat4Transform.rotateAroundX(0));
+    Hatch_GLEventListener.this.lowerBranchRotateZ.update();
+    upperBranchRotate.setTransform(Mat4Transform.rotateAroundX(0));
+    upperBranchRotate.update();
   }
   
   // ***************************************************
@@ -132,23 +131,29 @@ public class Hatch_GLEventListener implements GLEventListener {
 
   private Camera camera;
   private Mat4 perspective;
-  private Model floor, backWall, leftWall, rightWall, sphere, base, egg, table, tableLeg1, tableLeg2, tableLeg3, tableLeg4, cube, cube2;
+  private Model floor, backWall, leftWall, rightWall, sphere, base, eggShape, table, tableLeg1, tableLeg2, tableLeg3, tableLeg4, cube, cube2;
   private Light light;
-  private SGNode robotRoot;
+  private SGNode eggRoot, lampRoot;
   
   private float xPosition = 0;
-  private TransformNode translateX, robotMoveTranslate, leftArmRotate, rightArmRotate;
+  private TransformNode jumpY, translateX, rotateAllX, rotateAllZ;
+  private TransformNode lowerBranchRotateZ, lowerBranchRotateX;
+  private TransformNode upperBranchRotate;
+  private TransformNode lampMoveTranslate;
+  private float rotateAllAngleStart = 5, rotateAllAngleX = rotateAllAngleStart ,rotateAllAngleZ = rotateAllAngleStart;
+  private float jumpYStart = 0, jumpYHeight = jumpYStart;
+  private float jumpHeght = 0.3f;
   
   private void initialise(GL3 gl) {
     createRandomNumbers();
-    int[] textureId0 = TextureLibrary.loadTexture(gl, "textures/chequerboard.jpg");
+    int[] textureId0 = TextureLibrary.loadTexture(gl, "textures/wall.jpg");
     int[] textureId1 = TextureLibrary.loadTexture(gl, "textures/jade.jpg");
     int[] textureId2 = TextureLibrary.loadTexture(gl, "textures/jade_specular.jpg");
     int[] textureId3 = TextureLibrary.loadTexture(gl, "textures/container2.jpg");
     int[] textureId4 = TextureLibrary.loadTexture(gl, "textures/container2_specular.jpg");
     int[] textureId5 = TextureLibrary.loadTexture(gl, "textures/wattBook.jpg");
     int[] textureId6 = TextureLibrary.loadTexture(gl, "textures/wattBook_specular.jpg");
-    
+    int[] textureId7 = TextureLibrary.loadTexture(gl, "textures/woodenFloor.jpg");
         
     light = new Light(gl);
     light.setCamera(camera);
@@ -157,7 +162,7 @@ public class Hatch_GLEventListener implements GLEventListener {
     Shader shader = new Shader(gl, "vs_tt_05.txt", "fs_tt_05.txt");
     Material material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 32.0f);
     Mat4 modelMatrix = Mat4Transform.scale(16,1f,16);
-    floor = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId0);
+    floor = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId7);
 
     mesh = new Mesh(gl, TwoTriangles.vertices.clone(), TwoTriangles.indices.clone());
     shader = new Shader(gl, "vs_tt_05.txt", "fs_tt_05.txt");
@@ -191,6 +196,8 @@ public class Hatch_GLEventListener implements GLEventListener {
     modelMatrix = Mat4.multiply(Mat4Transform.scale(4,4,4), Mat4Transform.translate(0,0.5f,0));
     sphere = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId1, textureId2);
 
+    eggShape = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId3, textureId4);
+
     mesh = new Mesh(gl, Cube.vertices.clone(), Cube.indices.clone());
     shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
     material = new Material(new Vec3(1.0f, 0.5f, 0.31f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 32.0f);
@@ -220,117 +227,146 @@ public class Hatch_GLEventListener implements GLEventListener {
     modelMatrix = Mat4.multiply(Mat4Transform.scale(0.5f,wholeHeight/2,0.5f), Mat4Transform.translate(-tableWidth+0.5f,0.5f,-tableWidth+0.5f));
     tableLeg4 = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId3, textureId4);
 
-    wholeHeight += 0.5f;
+    wholeHeight = wholeHeight + 0.5f;
     modelMatrix = Mat4.multiply(Mat4Transform.scale(tableWidth,tableHeight,tableDepth), Mat4Transform.translate(0,wholeHeight,0));
     table = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId3, textureId4);
 
-    wholeHeight += tableHeight + 0.5f;
-    modelMatrix = Mat4.multiply(Mat4Transform.scale(2f,tableHeight,2f), Mat4Transform.translate(0, wholeHeight,0));
+    wholeHeight = (wholeHeight + tableHeight)*2 + 0.5f;
+    modelMatrix = Mat4.multiply(Mat4Transform.scale(1.5f,tableHeight/2,1.5f), Mat4Transform.translate(0, wholeHeight,0));
     base = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId3, textureId4);
 
     // egg
 
-    mesh = new Mesh(gl, Sphere.vertices.clone(), Sphere.indices.clone());
-    shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
-    material = new Material(new Vec3(1.0f, 0.5f, 0.31f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 32.0f);
-    modelMatrix = Mat4.multiply(Mat4Transform.scale(1,1.3f,1), Mat4Transform.translate(0, 3.4f,0));
-    egg = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId3, textureId4);
+    eggRoot = new NameNode("egg");
+    jumpY = new TransformNode("jump", Mat4Transform.translate(0,jumpYHeight,0));
+    translateX = new TransformNode("translate("+xPosition+",0,0)", Mat4Transform.translate(xPosition,0,0));
+    rotateAllX = new TransformNode("rotateAroundZ("+rotateAllAngleX+")", Mat4Transform.rotateAroundX(rotateAllAngleX));
+    rotateAllZ = new TransformNode("rotateAroundZ("+rotateAllAngleZ+")", Mat4Transform.rotateAroundZ(rotateAllAngleZ));
+
+    NameNode egg = new NameNode("egg");
+    Mat4 m = Mat4Transform.scale(2,2.5f,2);
+    m = Mat4.multiply(m, Mat4Transform.translate(0, 1.9f,0));
+    TransformNode makeEgg = new TransformNode("scale(2,2.5f,2);translate(0, 1.9f,0)", m);
+    ModelNode eggNode = new ModelNode("Sphere(egg)", sphere);
+
+    eggRoot.addChild(translateX);
+      translateX.addChild(jumpY);
+        jumpY.addChild(rotateAllX);
+         rotateAllX.addChild(rotateAllZ);
+          rotateAllZ.addChild(egg);
+            egg.addChild(makeEgg);
+              makeEgg.addChild(eggNode);
+
+    eggRoot.update();
 
     // robot
     
-    float bodyHeight = 3f;
-    float bodyWidth = 2f;
-    float bodyDepth = 1f;
-    float headScale = 2f;
-    float armLength = 3.5f;
-    float armScale = 0.5f;
-    float legLength = 3.5f;
-    float legScale = 0.67f;
+    float jointScale = 0.5f;
+    float branchLength = 2.5f;
+    float branchScale = 0.3f;
+    float baseHeight = 0.5f;
+    float baseScale = 1.5f;
+    float headLength = 1f;
+    float headScale = 0.5f;
+    float stickLength = 1.5f;
+    float stickScale = 0.1f;
     
-    robotRoot = new NameNode("root");
-    robotMoveTranslate = new TransformNode("robot transform",Mat4Transform.translate(xPosition,0,0));
-    
-    TransformNode robotTranslate = new TransformNode("robot transform",Mat4Transform.translate(0,legLength,0));
-    
-    NameNode body = new NameNode("body");
-      Mat4 m = Mat4Transform.scale(bodyWidth,bodyHeight,bodyDepth);
-      m = Mat4.multiply(m, Mat4Transform.translate(0,0.5f,0));
-      TransformNode bodyTransform = new TransformNode("body transform", m);
-        ModelNode bodyShape = new ModelNode("Cube(body)", cube);
+    lampRoot = new NameNode("root");
+    lampMoveTranslate = new TransformNode("lamp transform",Mat4Transform.translate(xPosition - 5,0,0));
 
-    NameNode head = new NameNode("head"); 
+    lowerBranchRotateX = new TransformNode("rotateAroundZ("+rotateAllAngleX+")", Mat4Transform.rotateAroundX(rotateAllAngleX));
+    lowerBranchRotateZ = new TransformNode("rotateAroundZ("+rotateAllAngleZ+")", Mat4Transform.rotateAroundZ(rotateAllAngleZ));
+
+    TransformNode lampTranslate = new TransformNode("lamp transform",Mat4Transform.translate(0,0,0));
+
+    NameNode joint = new NameNode("joint");
       m = new Mat4(1);
-      m = Mat4.multiply(m, Mat4Transform.translate(0,bodyHeight,0));
-      m = Mat4.multiply(m, Mat4Transform.scale(headScale,headScale,headScale));
+      m = Mat4.multiply(m, Mat4Transform.scale(jointScale, jointScale, jointScale));
+      m = Mat4.multiply(m, Mat4Transform.translate(0,(branchLength)*2 + 1.175f,0));
+      TransformNode jointTransform = new TransformNode("joint transform", m);
+        ModelNode jointShape = new ModelNode("Sphere(joint)", sphere);
+
+    NameNode lowerBranch = new NameNode("lower branch");
+      m = Mat4Transform.scale(branchScale, branchLength, branchScale);
+      m = Mat4.multiply(m, Mat4Transform.translate(0,0.8f,0));
+      TransformNode makeLowerBranch = new TransformNode("lower branch transform", m);
+      ModelNode cube0Node = new ModelNode("Sphere(0)", sphere);
+    TransformNode translateToTop01 = new TransformNode("translate",Mat4Transform.translate(0,0,0));
+    TransformNode translateToTop02 = new TransformNode("translate",Mat4Transform.translate(0,1.5f,0));
+    upperBranchRotate = new TransformNode("rotateAroundZ("+rotateAllAngleZ+")",Mat4Transform.rotateAroundZ(rotateAllAngleZ));
+    NameNode upperBranch = new NameNode("upper branch");
+      m = Mat4Transform.scale(branchScale, branchLength, branchScale);
+      m = Mat4.multiply(m, Mat4Transform.translate(0,1f,0));
+      TransformNode makeUpperBranch = new TransformNode("upper branch transform", m);
+      ModelNode cube1Node = new ModelNode("Sphere(1)", sphere);  ModelNode upperBranchShape = new ModelNode("Cube(1)", cube);
+
+//    NameNode lowerBranch = new NameNode("lower branch");
+//      lowerBranchRotateZ = new TransformNode("lower branch rotate z", Mat4Transform.rotateAroundZ(80));
+//      lowerBranchRotateX = new TransformNode("lower branch rotate x", Mat4Transform.rotateAroundX(80));
+//      m = new Mat4(1);
+//      m = Mat4.multiply(m, Mat4Transform.scale(branchScale, branchLength, branchScale));
+//      m = Mat4.multiply(m, Mat4Transform.translate(0,0.675f,0));
+//      TransformNode lowerBranchTransform = new TransformNode("lower branch transform", m);
+//        ModelNode lowerBranchShape = new ModelNode("Sphere(lower branch)", sphere);
+//
+//    NameNode upperBranch = new NameNode("upper branch");
+//      upperBranchRotate = new TransformNode("upper branch rotate z", Mat4Transform.rotateAroundZ(80));
+//      m = new Mat4(1);
+//      m = Mat4.multiply(m, Mat4Transform.scale(branchScale, branchLength, branchScale));
+//      m = Mat4.multiply(m, Mat4Transform.translate(0,jointScale + 1.3f,0));
+//      TransformNode upperBranchTransform = new TransformNode("upper branch transform", m);
+//        ModelNode upperBranchShape = new ModelNode("Sphere(upper branch)", sphere);
+//
+    NameNode lampBase = new NameNode("lamp base");
+      m = new Mat4(1);
+      m = Mat4.multiply(m, Mat4Transform.scale(baseScale,baseHeight,baseScale));
       m = Mat4.multiply(m, Mat4Transform.translate(0,0.5f,0));
-      TransformNode headTransform = new TransformNode("head transform", m);
-        ModelNode headShape = new ModelNode("Sphere(head)", sphere);
+      TransformNode lampBaseTransform = new TransformNode("lamp base transform", m);
+        ModelNode lampBaseShape = new ModelNode("Cube(lamp base)", cube);
+//
+//    NameNode lampHead = new NameNode("lamp head");
+//    m = new Mat4(1);
+//    m = Mat4.multiply(m, Mat4Transform.scale(headLength,headScale,headScale));
+//    m = Mat4.multiply(m, Mat4Transform.translate(0,(branchLength)*4 + 1.8f,0));
+//    TransformNode lampHeadTransform = new TransformNode("lamp head transform", m);
+//    ModelNode lampHeadShape = new ModelNode("Cube(lamp head)", cube);
+//
+//    NameNode stick = new NameNode("stick");
+//    m = new Mat4(1);
+//    m = Mat4.multiply(m, Mat4Transform.scale(stickLength,stickScale,stickScale));
+//    m = Mat4.multiply(m, Mat4Transform.translate(-jointScale,32,0));
+//    TransformNode stickTransform = new TransformNode("stick transform", m);
+//    ModelNode stickShape = new ModelNode("Cube(stick)", cube);
+
+    lampRoot.addChild(lampMoveTranslate);
+      lampMoveTranslate.addChild(lampTranslate);
+        lampTranslate.addChild(lampBase);
+        lampBase.addChild(lampBaseTransform);
+        lampBaseTransform.addChild(lampBaseShape);
+        lampBase.addChild(lowerBranchRotateX);
+        lowerBranchRotateX.addChild(lowerBranchRotateZ);
+        lowerBranchRotateZ.addChild(lowerBranch);
+          lowerBranch.addChild(makeLowerBranch);
+            makeLowerBranch.addChild(cube0Node);
+          lowerBranch.addChild(translateToTop01);
+          translateToTop01.addChild(joint);
+            joint.addChild(jointTransform);
+              jointTransform.addChild(jointShape);
+            joint.addChild(translateToTop02);
+              translateToTop02.addChild(upperBranchRotate);
+                upperBranchRotate.addChild(upperBranch);
+                  upperBranch.addChild(makeUpperBranch);
+                    makeUpperBranch.addChild(cube1Node);
+//
+//              upperBranch.addChild(upperBranchTransform);
+//              upperBranchTransform.addChild(upperBranchRotate);
+//              upperBranchRotate.addChild(upperBranchShape);
+//              upperBranch.addChild(lampHead);
+//                lampHead.addChild(lampHeadTransform);
+//                lampHeadTransform.addChild(lampHeadShape);
     
-   NameNode leftarm = new NameNode("left arm");
-      TransformNode leftArmTranslate = new TransformNode("leftarm translate", 
-                                           Mat4Transform.translate((bodyWidth*0.5f)+(armScale*0.5f),bodyHeight,0));
-      leftArmRotate = new TransformNode("leftarm rotate",Mat4Transform.rotateAroundX(180));
-      m = new Mat4(1);
-      m = Mat4.multiply(m, Mat4Transform.scale(armScale,armLength,armScale));
-      m = Mat4.multiply(m, Mat4Transform.translate(0,0.5f,0));
-      TransformNode leftArmScale = new TransformNode("leftarm scale", m);
-        ModelNode leftArmShape = new ModelNode("Cube(left arm)", cube2);
-    
-    NameNode rightarm = new NameNode("right arm");
-      TransformNode rightArmTranslate = new TransformNode("rightarm translate", 
-                                            Mat4Transform.translate(-(bodyWidth*0.5f)-(armScale*0.5f),bodyHeight,0));
-      rightArmRotate = new TransformNode("rightarm rotate",Mat4Transform.rotateAroundX(180));
-      m = new Mat4(1);
-      m = Mat4.multiply(m, Mat4Transform.scale(armScale,armLength,armScale));
-      m = Mat4.multiply(m, Mat4Transform.translate(0,0.5f,0));
-      TransformNode rightArmScale = new TransformNode("rightarm scale", m);
-        ModelNode rightArmShape = new ModelNode("Cube(right arm)", cube2);
-        
-    NameNode leftleg = new NameNode("left leg");
-      m = new Mat4(1);
-      m = Mat4.multiply(m, Mat4Transform.translate((bodyWidth*0.5f)-(legScale*0.5f),0,0));
-      m = Mat4.multiply(m, Mat4Transform.rotateAroundX(180));
-      m = Mat4.multiply(m, Mat4Transform.scale(legScale,legLength,legScale));
-      m = Mat4.multiply(m, Mat4Transform.translate(0,0.5f,0));
-      TransformNode leftlegTransform = new TransformNode("leftleg transform", m);
-        ModelNode leftLegShape = new ModelNode("Cube(leftleg)", cube);
-    
-    NameNode rightleg = new NameNode("right leg");
-      m = new Mat4(1);
-      m = Mat4.multiply(m, Mat4Transform.translate(-(bodyWidth*0.5f)+(legScale*0.5f),0,0));
-      m = Mat4.multiply(m, Mat4Transform.rotateAroundX(180));
-      m = Mat4.multiply(m, Mat4Transform.scale(legScale,legLength,legScale));
-      m = Mat4.multiply(m, Mat4Transform.translate(0,0.5f,0));
-      TransformNode rightlegTransform = new TransformNode("rightleg transform", m);
-        ModelNode rightLegShape = new ModelNode("Cube(rightleg)", cube);
-        
-    robotRoot.addChild(robotMoveTranslate);
-      robotMoveTranslate.addChild(robotTranslate);
-        robotTranslate.addChild(body);
-          body.addChild(bodyTransform);
-            bodyTransform.addChild(bodyShape);
-          body.addChild(head);
-            head.addChild(headTransform);
-            headTransform.addChild(headShape);
-          body.addChild(leftarm);
-            leftarm.addChild(leftArmTranslate);
-            leftArmTranslate.addChild(leftArmRotate);
-            leftArmRotate.addChild(leftArmScale);
-            leftArmScale.addChild(leftArmShape);
-          body.addChild(rightarm);
-            rightarm.addChild(rightArmTranslate);
-            rightArmTranslate.addChild(rightArmRotate);
-            rightArmRotate.addChild(rightArmScale);
-            rightArmScale.addChild(rightArmShape);
-          body.addChild(leftleg);
-            leftleg.addChild(leftlegTransform);
-            leftlegTransform.addChild(leftLegShape);
-          body.addChild(rightleg);
-            rightleg.addChild(rightlegTransform);
-            rightlegTransform.addChild(rightLegShape);
-    
-    robotRoot.update();  // IMPORTANT - don't forget this
-    //robotRoot.print(0, false);
+    lampRoot.update();  // IMPORTANT - don't forget this
+    //lampRoot.print(0, false);
     //System.exit(0);
   }
  
@@ -343,21 +379,37 @@ public class Hatch_GLEventListener implements GLEventListener {
     leftWall.render(gl);
     rightWall.render(gl);
     base.render(gl);
-    egg.render(gl);
     table.render(gl);
     tableLeg1.render(gl);
     tableLeg2.render(gl);
     tableLeg3.render(gl);
     tableLeg4.render(gl);
-    if (animation) updateLeftArm();
-    robotRoot.draw(gl);
+    updateEgg();
+    updateLowerBranch();
+    eggRoot.draw(gl);
+    lampRoot.draw(gl);
   }
 
-  private void updateLeftArm() {
+  private void updateEgg() {
     double elapsedTime = getSeconds()-startTime;
-    float rotateAngle = 180f+90f*(float)Math.sin(elapsedTime);
-    leftArmRotate.setTransform(Mat4Transform.rotateAroundX(rotateAngle));
-    leftArmRotate.update();
+    rotateAllAngleX = rotateAllAngleStart * (float) Math.sin(elapsedTime * 6);
+    rotateAllAngleZ = rotateAllAngleStart * (float) Math.cos(elapsedTime * 4);
+    rotateAllX.setTransform(Mat4Transform.rotateAroundX(rotateAllAngleX));
+    rotateAllZ.setTransform(Mat4Transform.rotateAroundZ(rotateAllAngleZ));
+    jumpYHeight = jumpYStart + jumpHeght + (float) Math.sin(elapsedTime * 12) * jumpHeght;
+    jumpY.setTransform(Mat4Transform.translate(0, jumpYHeight, 0));
+    eggRoot.update(); // IMPORTANT – the scene graph has changed
+  }
+
+  private void updateLowerBranch() {
+    double elapsedTime = getSeconds()-startTime;
+    float rotateAngleUpper = 45f*(float)Math.sin(elapsedTime);
+    float rotateAngleLowerZ = 45f*(float)Math.cos(elapsedTime);
+    float rotateAngleLowerX = 45f*(float)Math.sin(elapsedTime);
+    lowerBranchRotateZ.setTransform(Mat4Transform.rotateAroundZ(rotateAngleLowerZ));
+    lowerBranchRotateX.setTransform(Mat4Transform.rotateAroundX(rotateAngleLowerX));
+    upperBranchRotate.setTransform(Mat4Transform.rotateAroundZ(rotateAngleUpper));
+    lampRoot.update();
   }
   
   // The light's postion is continually being changed, so needs to be calculated for each frame.
