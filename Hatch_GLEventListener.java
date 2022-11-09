@@ -106,14 +106,37 @@ public class Hatch_GLEventListener implements GLEventListener {
     lampMoveTranslate.setTransform(Mat4Transform.translate(xPosition,0,0));
     lampMoveTranslate.update();
   }
-  
-  public void loweredBranchs() {
-    stopAnimation();
-    Hatch_GLEventListener.this.lowerBranchRotateZ.setTransform(Mat4Transform.rotateAroundX(180));
-    Hatch_GLEventListener.this.lowerBranchRotateZ.update();
-    upperBranchRotate.setTransform(Mat4Transform.rotateAroundX(180));
-    upperBranchRotate.update();
+
+  private int currentState=2;
+  private int state;
+  private int[] lowerAngleZL = {45, -45, -30};
+  private int[] lowerAngleYL = {0, 60, -90};
+  private int[] upperAngleL = {-100, -20, 75};
+  private int[] headAngleL = {75, 70, -40};
+  public void lampState(int n) {
+    animation = true;
+    state = n;
+    startTime = getSeconds()-savedTime;
   }
+
+  private void moveLamp(float lowerAngleY, float lowerAngleZ, float upperAngle, float headAngle){
+    double elapsedTime = getSeconds()-startTime;
+    float rotateAngleUpper = upperAngleL[currentState]+upperAngle*(float)Math.sin(elapsedTime);
+    float rotateAngleHead = headAngleL[currentState]+headAngle*(float)Math.sin(elapsedTime);
+    float rotateAngleLowerZ = lowerAngleZL[currentState]+lowerAngleZ*(float)Math.sin(elapsedTime);
+    float rotateAngleLowerY = lowerAngleYL[currentState]+lowerAngleY*(float)Math.sin(elapsedTime);
+    if ((float)Math.sin(elapsedTime) < 0.99) {
+      lowerBranchRotateZ.setTransform(Mat4Transform.rotateAroundZ(rotateAngleLowerZ));
+      lowerBranchRotateY.setTransform(Mat4Transform.rotateAroundY(rotateAngleLowerY));
+      upperBranchRotate.setTransform(Mat4Transform.rotateAroundZ(rotateAngleUpper));
+      headRotate.setTransform(Mat4Transform.rotateAroundZ(rotateAngleHead));
+      lampRootL.update();
+    }else{
+      animation = false;
+      currentState = state;
+    }
+    }
+
    
   public void raisedBranchs() {
     stopAnimation();
@@ -131,16 +154,16 @@ public class Hatch_GLEventListener implements GLEventListener {
 
   private Camera camera;
   private Mat4 perspective;
-  private Model floor, backWall, leftWall, rightWall, sphere, base, eggShape, table, tableLeg1, tableLeg2, tableLeg3, tableLeg4, cube, cube2;
+  private Model floor, backWall, leftWall, rightWall, sphere, base, table, tableLeg1, tableLeg2, tableLeg3, tableLeg4, cube, cube2;
   private Light light;
-  private SGNode eggRoot, lampRoot;
+  private SGNode eggRoot, lampRootL, lampRootR;
   
   private float xPosition = 0;
-  private TransformNode jumpY, translateX, rotateAllX, rotateAllZ;
-  private TransformNode lowerBranchRotateZ, lowerBranchRotateX;
+  private TransformNode jumpY, translateX, rotateAllY, rotateAllZ;
+  private TransformNode lowerBranchRotateZ, lowerBranchRotateY;
   private TransformNode upperBranchRotate, headRotate;
   private TransformNode lampMoveTranslate;
-  private float rotateAllAngleStart = 5, rotateAllAngleX = rotateAllAngleStart ,rotateAllAngleZ = rotateAllAngleStart;
+  private float rotateAllAngleStart = 5, rotateAllAngleY = rotateAllAngleStart ,rotateAllAngleZ = rotateAllAngleStart;
   private float jumpYStart = 0, jumpYHeight = jumpYStart;
   private float jumpHeght = 0.3f;
   
@@ -196,7 +219,6 @@ public class Hatch_GLEventListener implements GLEventListener {
     modelMatrix = Mat4.multiply(Mat4Transform.scale(4,4,4), Mat4Transform.translate(0,0.5f,0));
     sphere = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId1, textureId2);
 
-    eggShape = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId3, textureId4);
 
     mesh = new Mesh(gl, Cube.vertices.clone(), Cube.indices.clone());
     shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
@@ -239,9 +261,9 @@ public class Hatch_GLEventListener implements GLEventListener {
 
     eggRoot = new NameNode("egg");
     jumpY = new TransformNode("jump", Mat4Transform.translate(0,jumpYHeight,0));
-    translateX = new TransformNode("translate("+xPosition+",0,0)", Mat4Transform.translate(xPosition,0,0));
-    rotateAllX = new TransformNode("rotateAroundZ("+rotateAllAngleX+")", Mat4Transform.rotateAroundX(rotateAllAngleX));
-    rotateAllZ = new TransformNode("rotateAroundZ("+rotateAllAngleZ+")", Mat4Transform.rotateAroundZ(rotateAllAngleZ));
+    translateX = new TransformNode("translate", Mat4Transform.translate(xPosition,0,0));
+    rotateAllY = new TransformNode("rotateAroundZ", Mat4Transform.rotateAroundX(0));
+    rotateAllZ = new TransformNode("rotateAroundZ", Mat4Transform.rotateAroundZ(0));
 
     NameNode egg = new NameNode("egg");
     Mat4 m = Mat4Transform.scale(2,2.5f,2);
@@ -251,15 +273,15 @@ public class Hatch_GLEventListener implements GLEventListener {
 
     eggRoot.addChild(translateX);
       translateX.addChild(jumpY);
-        jumpY.addChild(rotateAllX);
-         rotateAllX.addChild(rotateAllZ);
+        jumpY.addChild(rotateAllY);
+         rotateAllY.addChild(rotateAllZ);
           rotateAllZ.addChild(egg);
             egg.addChild(makeEgg);
               makeEgg.addChild(eggNode);
 
     eggRoot.update();
 
-    // robot
+    // Left Lamp
     
     float jointScale = 0.5f;
     float branchLength = 2.5f;
@@ -271,8 +293,8 @@ public class Hatch_GLEventListener implements GLEventListener {
     float stickLength = 1.5f;
     float stickScale = 0.1f;
     
-    lampRoot = new NameNode("root");
-    lampMoveTranslate = new TransformNode("lamp transform",Mat4Transform.translate(xPosition - 2,0,6));
+    lampRootL = new NameNode("root");
+    lampMoveTranslate = new TransformNode("lamp transform",Mat4Transform.translate(xPosition - 5,0,0));
 
     TransformNode lampTranslate = new TransformNode("lamp transform",Mat4Transform.translate(0,0,0));
 
@@ -291,8 +313,8 @@ public class Hatch_GLEventListener implements GLEventListener {
     ModelNode lampBaseShape = new ModelNode("Cube(lamp base)", cube);
 
     TransformNode translateToTop01 = new TransformNode("translate base and lower branch",Mat4Transform.translate(0f,0.5f,0f));
-    lowerBranchRotateX = new TransformNode("rotate lower branch X", Mat4Transform.rotateAroundX(rotateAllAngleX));
-    lowerBranchRotateZ = new TransformNode("rotate lower branch Z", Mat4Transform.rotateAroundZ(rotateAllAngleZ));
+    lowerBranchRotateY = new TransformNode("rotate lower branch Y", Mat4Transform.rotateAroundY(lowerAngleYL[currentState]));
+    lowerBranchRotateZ = new TransformNode("rotate lower branch Z", Mat4Transform.rotateAroundZ(lowerAngleZL[currentState]));
 
     NameNode lowerBranch = new NameNode("lower branch");
       m = Mat4Transform.scale(branchScale, branchLength, branchScale);
@@ -300,7 +322,7 @@ public class Hatch_GLEventListener implements GLEventListener {
       TransformNode makeLowerBranch = new TransformNode("lower branch transform", m);
       ModelNode cube0Node = new ModelNode("Sphere(0)", sphere);
 
-    upperBranchRotate = new TransformNode("rotate upper branch",Mat4Transform.rotateAroundZ(rotateAllAngleZ));
+    upperBranchRotate = new TransformNode("rotate upper branch",Mat4Transform.rotateAroundZ(upperAngleL[currentState]));
     TransformNode translateToTop02 = new TransformNode("translate two branches",Mat4Transform.translate(0,2.5f,0));
     NameNode upperBranch = new NameNode("upper branch");
       m = Mat4Transform.scale(branchScale, branchLength, branchScale);
@@ -309,7 +331,7 @@ public class Hatch_GLEventListener implements GLEventListener {
       ModelNode cube1Node = new ModelNode("Sphere(1)", sphere);
 
     TransformNode translateToTop03 = new TransformNode("translate",Mat4Transform.translate(0,branchLength,0));
-    headRotate = new TransformNode("rotate lamp head",Mat4Transform.rotateAroundZ(rotateAllAngleZ));
+    headRotate = new TransformNode("rotate lamp head",Mat4Transform.rotateAroundZ(headAngleL[currentState]));
 
     NameNode lampHead = new NameNode("lamp head");
       m = new Mat4(1);
@@ -325,14 +347,14 @@ public class Hatch_GLEventListener implements GLEventListener {
 //    TransformNode stickTransform = new TransformNode("stick transform", m);
 //    ModelNode stickShape = new ModelNode("Cube(stick)", cube);
 
-    lampRoot.addChild(lampMoveTranslate);
+    lampRootL.addChild(lampMoveTranslate);
       lampMoveTranslate.addChild(lampTranslate);
         lampTranslate.addChild(lampBase);
         lampBase.addChild(lampBaseTransform);
         lampBaseTransform.addChild(lampBaseShape);
         lampBase.addChild(translateToTop01);
-          translateToTop01.addChild(lowerBranchRotateX);
-          lowerBranchRotateX.addChild(lowerBranchRotateZ);
+          translateToTop01.addChild(lowerBranchRotateY);
+          lowerBranchRotateY.addChild(lowerBranchRotateZ);
             lowerBranchRotateZ.addChild(lowerBranch);
               lowerBranch.addChild(makeLowerBranch);
                 makeLowerBranch.addChild(cube0Node);
@@ -349,9 +371,9 @@ public class Hatch_GLEventListener implements GLEventListener {
                       headRotate.addChild(lampHead);
                         lampHead.addChild(lampHeadTransform);
                         lampHeadTransform.addChild(lampHeadShape);
-    
-    lampRoot.update();  // IMPORTANT - don't forget this
-    //lampRoot.print(0, false);
+
+    lampRootL.update();  // IMPORTANT - don't forget this
+    //lampRootL.print(0, false);
     //System.exit(0);
   }
  
@@ -370,34 +392,23 @@ public class Hatch_GLEventListener implements GLEventListener {
     tableLeg3.render(gl);
     tableLeg4.render(gl);
     updateEgg();
-    updateLowerBranch();
+    if (animation && currentState!= state) moveLamp(lowerAngleYL[state]-lowerAngleYL[currentState], lowerAngleZL[state]-lowerAngleZL[currentState], upperAngleL[state]-upperAngleL[currentState],headAngleL[state]-headAngleL[currentState]);
+    lampRootL.draw(gl);
     eggRoot.draw(gl);
-    lampRoot.draw(gl);
+
   }
 
   private void updateEgg() {
     double elapsedTime = getSeconds()-startTime;
-    rotateAllAngleX = rotateAllAngleStart * (float) Math.sin(elapsedTime * 6);
+    rotateAllAngleY = rotateAllAngleStart * (float) Math.sin(elapsedTime * 6);
     rotateAllAngleZ = rotateAllAngleStart * (float) Math.cos(elapsedTime * 4);
-    rotateAllX.setTransform(Mat4Transform.rotateAroundX(rotateAllAngleX));
+    rotateAllY.setTransform(Mat4Transform.rotateAroundX(rotateAllAngleY));
     rotateAllZ.setTransform(Mat4Transform.rotateAroundZ(rotateAllAngleZ));
     jumpYHeight = jumpYStart + jumpHeght + (float) Math.sin(elapsedTime * 12) * jumpHeght;
     jumpY.setTransform(Mat4Transform.translate(0, jumpYHeight, 0));
     eggRoot.update(); // IMPORTANT – the scene graph has changed
   }
 
-  private void updateLowerBranch() {
-    double elapsedTime = getSeconds()-startTime;
-    float rotateAngleUpper = -60f*(float)Math.sin(elapsedTime);
-    float rotateAngleHead = 30f*(float)Math.sin(elapsedTime);
-    float rotateAngleLowerZ = 45f*(float)Math.cos(elapsedTime);
-    float rotateAngleLowerX = 45f*(float)Math.sin(elapsedTime);
-    lowerBranchRotateZ.setTransform(Mat4Transform.rotateAroundZ(rotateAngleLowerZ));
-    lowerBranchRotateX.setTransform(Mat4Transform.rotateAroundX(rotateAngleLowerX));
-    upperBranchRotate.setTransform(Mat4Transform.rotateAroundZ(rotateAngleUpper));
-    headRotate.setTransform(Mat4Transform.rotateAroundZ(rotateAngleHead));
-    lampRoot.update();
-  }
   
   // The light's postion is continually being changed, so needs to be calculated for each frame.
   private Vec3 getLightPosition() {

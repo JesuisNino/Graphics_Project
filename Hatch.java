@@ -40,8 +40,9 @@ public class Hatch extends JFrame implements ActionListener {
         quitItem.addActionListener(this);
         fileMenu.add(quitItem);
     menuBar.add(fileMenu);
-    
+
     JPanel p = new JPanel();
+    p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
       JButton b = new JButton("camera X");
       b.addActionListener(this);
       p.add(b);
@@ -54,19 +55,22 @@ public class Hatch extends JFrame implements ActionListener {
       b = new JButton("stop");
       b.addActionListener(this);
       p.add(b);
-      b = new JButton("increase X position");
+      b = new JButton("increase X");
       b.addActionListener(this);
       p.add(b);
-      b = new JButton("decrease X position");
+      b = new JButton("decrease X");
       b.addActionListener(this);
       p.add(b);
-      b = new JButton("lowered arms");
+      b = new JButton("Left00");
       b.addActionListener(this);
       p.add(b);
-      b = new JButton("raised arms");
+      b = new JButton("Left01");
       b.addActionListener(this);
       p.add(b);
-    this.add(p, BorderLayout.SOUTH);
+      b = new JButton("Left02");
+      b.addActionListener(this);
+      p.add(b);
+    this.add(p, BorderLayout.WEST);
     
     addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
@@ -95,17 +99,20 @@ public class Hatch extends JFrame implements ActionListener {
     else if (e.getActionCommand().equalsIgnoreCase("stop")) {
       glEventListener.stopAnimation();
     }
-    else if (e.getActionCommand().equalsIgnoreCase("increase X position")) {
+    else if (e.getActionCommand().equalsIgnoreCase("increase X")) {
       glEventListener.incXPosition();
     }
-    else if (e.getActionCommand().equalsIgnoreCase("decrease X position")) {
+    else if (e.getActionCommand().equalsIgnoreCase("decrease X")) {
       glEventListener.decXPosition();
     }
-    else if (e.getActionCommand().equalsIgnoreCase("lowered arms")) {
-      glEventListener.loweredBranchs();
+    else if (e.getActionCommand().equalsIgnoreCase("Left00")) {
+      glEventListener.lampState(0);
     }
-    else if (e.getActionCommand().equalsIgnoreCase("raised arms")) {
-      glEventListener.raisedBranchs();
+    else if (e.getActionCommand().equalsIgnoreCase("Left01")) {
+      glEventListener.lampState(1);
+    }
+    else if (e.getActionCommand().equalsIgnoreCase("Left02")) {
+      glEventListener.lampState(2);
     }
     else if(e.getActionCommand().equalsIgnoreCase("quit"))
       System.exit(0);
