@@ -107,7 +107,7 @@ public class Hatch_GLEventListener implements GLEventListener {
     lampMoveTranslate.update();
   }
 
-  private int currentState=2;
+  private int currentState=0;
   private int state;
   private int[] lowerAngleZL = {45, -45, -30};
   private int[] lowerAngleYL = {0, 60, -90};
