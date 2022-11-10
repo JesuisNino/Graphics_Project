@@ -107,44 +107,56 @@ public class Hatch_GLEventListener implements GLEventListener {
     lampMoveTranslate.update();
   }
 
-  private int currentState=0;
-  private int state;
+  private int currentState, currentStateL, currentStateR=0;
+  private int state,lampNum, currentLampNum;
   private int[] lowerAngleZL = {45, -45, -30};
   private int[] lowerAngleYL = {0, 60, -90};
   private int[] upperAngleL = {-100, -20, 75};
   private int[] headAngleL = {75, 70, -40};
-  public void lampState(int n) {
+
+  private int[] lowerAngleZR = {-45, 60, 10};
+  private int[] lowerAngleYR = {0, -70, 90};
+  private int[] upperAngleR = {100, -10, -30};
+  private int[] headAngleR = {-75, -50, 20};
+
+  public void lampState(int n, int lamp) {
     animation = true;
     state = n;
-    startTime = getSeconds()-savedTime;
+    lampNum = lamp;
+    startTime = getSeconds() - savedTime;
   }
 
-  private void moveLamp(float lowerAngleY, float lowerAngleZ, float upperAngle, float headAngle){
+  private void moveLamp(int lamp, float lowerAngleY, float lowerAngleZ, float upperAngle, float headAngle){
     double elapsedTime = getSeconds()-startTime;
-    float rotateAngleUpper = upperAngleL[currentState]+upperAngle*(float)Math.sin(elapsedTime);
-    float rotateAngleHead = headAngleL[currentState]+headAngle*(float)Math.sin(elapsedTime);
-    float rotateAngleLowerZ = lowerAngleZL[currentState]+lowerAngleZ*(float)Math.sin(elapsedTime);
-    float rotateAngleLowerY = lowerAngleYL[currentState]+lowerAngleY*(float)Math.sin(elapsedTime);
-    if ((float)Math.sin(elapsedTime) < 0.99) {
-      lowerBranchRotateZ.setTransform(Mat4Transform.rotateAroundZ(rotateAngleLowerZ));
-      lowerBranchRotateY.setTransform(Mat4Transform.rotateAroundY(rotateAngleLowerY));
-      upperBranchRotate.setTransform(Mat4Transform.rotateAroundZ(rotateAngleUpper));
-      headRotate.setTransform(Mat4Transform.rotateAroundZ(rotateAngleHead));
-      lampRootL.update();
-    }else{
-      animation = false;
-      currentState = state;
-    }
-    }
+    float rotateAngleUpper, rotateAngleHead,rotateAngleLowerZ,rotateAngleLowerY;
 
-   
-  public void raisedBranchs() {
-    stopAnimation();
-    Hatch_GLEventListener.this.lowerBranchRotateZ.setTransform(Mat4Transform.rotateAroundX(0));
-    Hatch_GLEventListener.this.lowerBranchRotateZ.update();
-    upperBranchRotate.setTransform(Mat4Transform.rotateAroundX(0));
-    upperBranchRotate.update();
-  }
+    if (lamp==0 && (float)Math.sin(elapsedTime) < 0.99) {
+      currentLampNum = 0;
+      rotateAngleUpper = upperAngleL[currentState] + upperAngle * (float) Math.sin(elapsedTime);
+      rotateAngleHead = headAngleL[currentState] + headAngle * (float) Math.sin(elapsedTime);
+      rotateAngleLowerZ = lowerAngleZL[currentState] + lowerAngleZ * (float) Math.sin(elapsedTime);
+      rotateAngleLowerY = lowerAngleYL[currentState] + lowerAngleY * (float) Math.sin(elapsedTime);
+      lowerBranchRotateZL.setTransform(Mat4Transform.rotateAroundZ(rotateAngleLowerZ));
+      lowerBranchRotateYL.setTransform(Mat4Transform.rotateAroundY(rotateAngleLowerY));
+      upperBranchRotateL.setTransform(Mat4Transform.rotateAroundZ(rotateAngleUpper));
+      headRotateL.setTransform(Mat4Transform.rotateAroundZ(rotateAngleHead));
+      lampRootL.update();
+    }else if (lamp==1 && (float)Math.sin(elapsedTime) < 0.99) {
+      currentLampNum = 1;
+      rotateAngleUpper = upperAngleR[currentState] + upperAngle * (float) Math.sin(elapsedTime);
+      rotateAngleHead = headAngleR[currentState] + headAngle * (float) Math.sin(elapsedTime);
+      rotateAngleLowerZ = lowerAngleZR[currentState] + lowerAngleZ * (float) Math.sin(elapsedTime);
+      rotateAngleLowerY = lowerAngleYR[currentState] + lowerAngleY * (float) Math.sin(elapsedTime);
+      lowerBranchRotateZR.setTransform(Mat4Transform.rotateAroundZ(rotateAngleLowerZ));
+      lowerBranchRotateYR.setTransform(Mat4Transform.rotateAroundY(rotateAngleLowerY));
+      upperBranchRotateR.setTransform(Mat4Transform.rotateAroundZ(rotateAngleUpper));
+      headRotateR.setTransform(Mat4Transform.rotateAroundZ(rotateAngleHead));
+      lampRootR.update();
+    }else {
+      currentState = state;
+      animation = false;
+    }
+    }
   
   // ***************************************************
   /* THE SCENE
@@ -160,8 +172,8 @@ public class Hatch_GLEventListener implements GLEventListener {
   
   private float xPosition = 0;
   private TransformNode jumpY, translateX, rotateAllY, rotateAllZ;
-  private TransformNode lowerBranchRotateZ, lowerBranchRotateY;
-  private TransformNode upperBranchRotate, headRotate;
+  private TransformNode lowerBranchRotateZL, lowerBranchRotateYL, upperBranchRotateL, headRotateL;
+  private TransformNode lowerBranchRotateZR, lowerBranchRotateYR, upperBranchRotateR, headRotateR;
   private TransformNode lampMoveTranslate;
   private float rotateAllAngleStart = 5, rotateAllAngleY = rotateAllAngleStart ,rotateAllAngleZ = rotateAllAngleStart;
   private float jumpYStart = 0, jumpYHeight = jumpYStart;
@@ -296,49 +308,49 @@ public class Hatch_GLEventListener implements GLEventListener {
     lampRootL = new NameNode("root");
     lampMoveTranslate = new TransformNode("lamp transform",Mat4Transform.translate(xPosition - 5,0,0));
 
-    TransformNode lampTranslate = new TransformNode("lamp transform",Mat4Transform.translate(0,0,0));
+    TransformNode lampTranslateL = new TransformNode("lamp transform",Mat4Transform.translate(0,0,0));
 
-    NameNode joint = new NameNode("joint");
+    NameNode jointL = new NameNode("joint");
       m = new Mat4(1);
       m = Mat4.multiply(m, Mat4Transform.scale(jointScale, jointScale, jointScale));
       m = Mat4.multiply(m, Mat4Transform.translate(0,(branchLength)*2,0));
-      TransformNode jointTransform = new TransformNode("joint transform", m);
-        ModelNode jointShape = new ModelNode("Sphere(joint)", sphere);
+      TransformNode jointTransformL = new TransformNode("joint transform", m);
+        ModelNode jointShapeL = new ModelNode("Sphere(joint)", sphere);
 
-    NameNode lampBase = new NameNode("lamp base");
+    NameNode lampBaseL = new NameNode("lamp base");
     m = new Mat4(1);
     m = Mat4.multiply(m, Mat4Transform.scale(baseScale,baseHeight,baseScale));
     m = Mat4.multiply(m, Mat4Transform.translate(0,0.5f,0));
-    TransformNode lampBaseTransform = new TransformNode("lamp base transform", m);
-    ModelNode lampBaseShape = new ModelNode("Cube(lamp base)", cube);
+    TransformNode lampBaseTransformL = new TransformNode("lamp base transform", m);
+    ModelNode lampBaseShapeL = new ModelNode("Cube(lamp base)", cube);
 
-    TransformNode translateToTop01 = new TransformNode("translate base and lower branch",Mat4Transform.translate(0f,0.5f,0f));
-    lowerBranchRotateY = new TransformNode("rotate lower branch Y", Mat4Transform.rotateAroundY(lowerAngleYL[currentState]));
-    lowerBranchRotateZ = new TransformNode("rotate lower branch Z", Mat4Transform.rotateAroundZ(lowerAngleZL[currentState]));
+    TransformNode translateToTop01L = new TransformNode("translate base and lower branch",Mat4Transform.translate(0f,0.5f,0f));
+    lowerBranchRotateYL = new TransformNode("rotate lower branch Y", Mat4Transform.rotateAroundY(lowerAngleYL[currentState]));
+    lowerBranchRotateZL = new TransformNode("rotate lower branch Z", Mat4Transform.rotateAroundZ(lowerAngleZL[currentState]));
 
-    NameNode lowerBranch = new NameNode("lower branch");
+    NameNode lowerBranchL = new NameNode("lower branch");
       m = Mat4Transform.scale(branchScale, branchLength, branchScale);
       m = Mat4.multiply(m, Mat4Transform.translate(0,0.5f,0));
-      TransformNode makeLowerBranch = new TransformNode("lower branch transform", m);
-      ModelNode cube0Node = new ModelNode("Sphere(0)", sphere);
+      TransformNode makeLowerBranchL = new TransformNode("lower branch transform", m);
+      ModelNode lowerBranchShapeL = new ModelNode("Sphere(0)", sphere);
 
-    upperBranchRotate = new TransformNode("rotate upper branch",Mat4Transform.rotateAroundZ(upperAngleL[currentState]));
-    TransformNode translateToTop02 = new TransformNode("translate two branches",Mat4Transform.translate(0,2.5f,0));
-    NameNode upperBranch = new NameNode("upper branch");
+    upperBranchRotateL = new TransformNode("rotate upper branch",Mat4Transform.rotateAroundZ(upperAngleL[currentState]));
+    TransformNode translateToTop02L = new TransformNode("translate two branches",Mat4Transform.translate(0,2.5f,0));
+    NameNode upperBranchL = new NameNode("upper branch");
       m = Mat4Transform.scale(branchScale, branchLength, branchScale);
       m = Mat4.multiply(m, Mat4Transform.translate(0,0.5f,0));
-      TransformNode makeUpperBranch = new TransformNode("upper branch transform", m);
-      ModelNode cube1Node = new ModelNode("Sphere(1)", sphere);
+      TransformNode makeUpperBranchL = new TransformNode("upper branch transform", m);
+      ModelNode upperBranchShapeL = new ModelNode("Sphere(1)", sphere);
 
-    TransformNode translateToTop03 = new TransformNode("translate",Mat4Transform.translate(0,branchLength,0));
-    headRotate = new TransformNode("rotate lamp head",Mat4Transform.rotateAroundZ(headAngleL[currentState]));
+    TransformNode translateToTop03L = new TransformNode("translate",Mat4Transform.translate(0,branchLength,0));
+    headRotateL = new TransformNode("rotate lamp head",Mat4Transform.rotateAroundZ(headAngleL[currentState]));
 
-    NameNode lampHead = new NameNode("lamp head");
+    NameNode lampHeadL = new NameNode("lamp head");
       m = new Mat4(1);
       m = Mat4.multiply(m, Mat4Transform.scale(headLength,headScale,headScale));
       m = Mat4.multiply(m, Mat4Transform.translate(0,0,0));
-      TransformNode lampHeadTransform = new TransformNode("lamp head transform", m);
-      ModelNode lampHeadShape = new ModelNode("Cube(lamp head)", cube);
+      TransformNode lampHeadTransformL = new TransformNode("lamp head transform", m);
+      ModelNode lampHeadShapeL = new ModelNode("Cube(lamp head)", cube);
 //
 //    NameNode stick = new NameNode("stick");
 //    m = new Mat4(1);
@@ -348,32 +360,127 @@ public class Hatch_GLEventListener implements GLEventListener {
 //    ModelNode stickShape = new ModelNode("Cube(stick)", cube);
 
     lampRootL.addChild(lampMoveTranslate);
-      lampMoveTranslate.addChild(lampTranslate);
-        lampTranslate.addChild(lampBase);
-        lampBase.addChild(lampBaseTransform);
-        lampBaseTransform.addChild(lampBaseShape);
-        lampBase.addChild(translateToTop01);
-          translateToTop01.addChild(lowerBranchRotateY);
-          lowerBranchRotateY.addChild(lowerBranchRotateZ);
-            lowerBranchRotateZ.addChild(lowerBranch);
-              lowerBranch.addChild(makeLowerBranch);
-                makeLowerBranch.addChild(cube0Node);
-              lowerBranch.addChild(joint);
-                joint.addChild(jointTransform);
-                  jointTransform.addChild(jointShape);
-              lowerBranch.addChild(translateToTop02);
-                translateToTop02.addChild(upperBranchRotate);
-                  upperBranchRotate.addChild(upperBranch);
-                    upperBranch.addChild(makeUpperBranch);
-                      makeUpperBranch.addChild(cube1Node);
-                  upperBranch.addChild(translateToTop03);
-                    translateToTop03.addChild(headRotate);
-                      headRotate.addChild(lampHead);
-                        lampHead.addChild(lampHeadTransform);
-                        lampHeadTransform.addChild(lampHeadShape);
+      lampMoveTranslate.addChild(lampTranslateL);
+        lampTranslateL.addChild(lampBaseL);
+        lampBaseL.addChild(lampBaseTransformL);
+        lampBaseTransformL.addChild(lampBaseShapeL);
+        lampBaseL.addChild(translateToTop01L);
+          translateToTop01L.addChild(lowerBranchRotateYL);
+          lowerBranchRotateYL.addChild(lowerBranchRotateZL);
+            lowerBranchRotateZL.addChild(lowerBranchL);
+              lowerBranchL.addChild(makeLowerBranchL);
+                makeLowerBranchL.addChild(lowerBranchShapeL);
+              lowerBranchL.addChild(jointL);
+                jointL.addChild(jointTransformL);
+                  jointTransformL.addChild(jointShapeL);
+              lowerBranchL.addChild(translateToTop02L);
+                translateToTop02L.addChild(upperBranchRotateL);
+                  upperBranchRotateL.addChild(upperBranchL);
+                    upperBranchL.addChild(makeUpperBranchL);
+                      makeUpperBranchL.addChild(upperBranchShapeL);
+                  upperBranchL.addChild(translateToTop03L);
+                    translateToTop03L.addChild(headRotateL);
+                      headRotateL.addChild(lampHeadL);
+                        lampHeadL.addChild(lampHeadTransformL);
+                        lampHeadTransformL.addChild(lampHeadShapeL);
 
     lampRootL.update();  // IMPORTANT - don't forget this
     //lampRootL.print(0, false);
+    //System.exit(0);
+
+    // Right Lamp
+
+    jointScale = 0.7f;
+    branchLength = 3.3f;
+    branchScale = 0.4f;
+    baseHeight = 0.5f;
+    baseScale = 3f;
+    headLength = 2f;
+    headScale = 0.7f;
+    stickLength = 1.5f;
+    stickScale = 0.1f;
+
+    lampRootR = new NameNode("root");
+    lampMoveTranslate = new TransformNode("lamp transform",Mat4Transform.translate(xPosition + 5,0,0));
+
+    TransformNode lampTranslateR = new TransformNode("lamp transform",Mat4Transform.translate(0,0,0));
+
+    NameNode jointR = new NameNode("joint");
+    m = new Mat4(1);
+    m = Mat4.multiply(m, Mat4Transform.scale(jointScale, jointScale, jointScale));
+    m = Mat4.multiply(m, Mat4Transform.translate(0,4.7f,0));
+    TransformNode jointTransformR = new TransformNode("joint transform", m);
+    ModelNode jointShapeR = new ModelNode("Sphere(joint)", sphere);
+
+    NameNode lampBaseR = new NameNode("lamp base");
+    m = new Mat4(1);
+    m = Mat4.multiply(m, Mat4Transform.scale(baseScale,baseHeight,baseScale));
+    m = Mat4.multiply(m, Mat4Transform.translate(0,0.5f,0));
+    TransformNode lampBaseTransformR = new TransformNode("lamp base transform", m);
+    ModelNode lampBaseShapeR = new ModelNode("Cube(lamp base)", cube);
+
+    TransformNode translateToTop01R = new TransformNode("translate base and lower branch",Mat4Transform.translate(0f,0.5f,0f));
+    lowerBranchRotateYR = new TransformNode("rotate lower branch Y", Mat4Transform.rotateAroundY(lowerAngleYR[currentState]));
+    lowerBranchRotateZR = new TransformNode("rotate lower branch Z", Mat4Transform.rotateAroundZ(lowerAngleZR[currentState]));
+
+    NameNode lowerBranchR = new NameNode("lower branch");
+    m = Mat4Transform.scale(branchScale, branchLength, branchScale);
+    m = Mat4.multiply(m, Mat4Transform.translate(0,0.5f,0));
+    TransformNode makeLowerBranchR = new TransformNode("lower branch transform", m);
+    ModelNode lowerBranchShapeR = new ModelNode("Sphere(0)", sphere);
+
+    upperBranchRotateR = new TransformNode("rotate upper branch",Mat4Transform.rotateAroundZ(upperAngleR[currentState]));
+    TransformNode translateToTop02R = new TransformNode("translate two branches",Mat4Transform.translate(0,3.6f,0));
+    NameNode upperBranchR = new NameNode("upper branch");
+    m = Mat4Transform.scale(branchScale, branchLength, branchScale);
+    m = Mat4.multiply(m, Mat4Transform.translate(0,0.5f,0));
+    TransformNode makeUpperBranchR = new TransformNode("upper branch transform", m);
+    ModelNode upperBranchShapeR = new ModelNode("Sphere(1)", sphere);
+
+    TransformNode translateToTop03R = new TransformNode("translate",Mat4Transform.translate(0,3.5f,0));
+    headRotateR = new TransformNode("rotate lamp head",Mat4Transform.rotateAroundZ(headAngleR[currentState]));
+
+    NameNode lampHeadR = new NameNode("lamp head");
+    m = new Mat4(1);
+    m = Mat4.multiply(m, Mat4Transform.scale(headLength,headScale,headScale));
+    m = Mat4.multiply(m, Mat4Transform.translate(0,0,0));
+    TransformNode lampHeadTransformR = new TransformNode("lamp head transform", m);
+    ModelNode lampHeadShapeR = new ModelNode("Cube(lamp head)", cube);
+//
+//    NameNode stick = new NameNode("stick");
+//    m = new Mat4(1);
+//    m = Mat4.multiply(m, Mat4Transform.scale(stickLength,stickScale,stickScale));
+//    m = Mat4.multiply(m, Mat4Transform.translate(-jointScale,32,0));
+//    TransformNode stickTransform = new TransformNode("stick transform", m);
+//    ModelNode stickShape = new ModelNode("Cube(stick)", cube);
+
+    lampRootR.addChild(lampMoveTranslate);
+    lampMoveTranslate.addChild(lampTranslateR);
+    lampTranslateR.addChild(lampBaseR);
+    lampBaseR.addChild(lampBaseTransformR);
+    lampBaseTransformR.addChild(lampBaseShapeR);
+    lampBaseR.addChild(translateToTop01R);
+    translateToTop01R.addChild(lowerBranchRotateYR);
+    lowerBranchRotateYR.addChild(lowerBranchRotateZR);
+    lowerBranchRotateZR.addChild(lowerBranchR);
+    lowerBranchR.addChild(makeLowerBranchR);
+    makeLowerBranchR.addChild(lowerBranchShapeR);
+    lowerBranchR.addChild(jointR);
+    jointR.addChild(jointTransformR);
+    jointTransformR.addChild(jointShapeR);
+    lowerBranchR.addChild(translateToTop02R);
+    translateToTop02R.addChild(upperBranchRotateR);
+    upperBranchRotateR.addChild(upperBranchR);
+    upperBranchR.addChild(makeUpperBranchR);
+    makeUpperBranchR.addChild(upperBranchShapeR);
+    upperBranchR.addChild(translateToTop03R);
+    translateToTop03R.addChild(headRotateR);
+    headRotateR.addChild(lampHeadR);
+    lampHeadR.addChild(lampHeadTransformR);
+    lampHeadTransformR.addChild(lampHeadShapeR);
+
+    lampRootR.update();  // IMPORTANT - don't forget this
+    //lampRootR.print(0, false);
     //System.exit(0);
   }
  
@@ -392,8 +499,12 @@ public class Hatch_GLEventListener implements GLEventListener {
     tableLeg3.render(gl);
     tableLeg4.render(gl);
     updateEgg();
-    if (animation && currentState!= state) moveLamp(lowerAngleYL[state]-lowerAngleYL[currentState], lowerAngleZL[state]-lowerAngleZL[currentState], upperAngleL[state]-upperAngleL[currentState],headAngleL[state]-headAngleL[currentState]);
+    if(animation && (lampNum != currentLampNum || currentState != state)) {
+      if (lampNum == 0) moveLamp(0, lowerAngleYL[state] - lowerAngleYL[currentState], lowerAngleZL[state] - lowerAngleZL[currentState], upperAngleL[state] - upperAngleL[currentState], headAngleL[state] - headAngleL[currentState]);
+      if (lampNum == 1) moveLamp(1, lowerAngleYR[state] - lowerAngleYR[currentState], lowerAngleZR[state] - lowerAngleZR[currentState], upperAngleR[state] - upperAngleR[currentState], headAngleR[state] - headAngleR[currentState]);
+    }
     lampRootL.draw(gl);
+    lampRootR.draw(gl);
     eggRoot.draw(gl);
 
   }

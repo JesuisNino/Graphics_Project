@@ -70,6 +70,15 @@ public class Hatch extends JFrame implements ActionListener {
       b = new JButton("Left02");
       b.addActionListener(this);
       p.add(b);
+      b = new JButton("Right00");
+      b.addActionListener(this);
+      p.add(b);
+      b = new JButton("Right01");
+      b.addActionListener(this);
+      p.add(b);
+      b = new JButton("Right02");
+      b.addActionListener(this);
+      p.add(b);
     this.add(p, BorderLayout.WEST);
     
     addWindowListener(new WindowAdapter() {
@@ -106,13 +115,22 @@ public class Hatch extends JFrame implements ActionListener {
       glEventListener.decXPosition();
     }
     else if (e.getActionCommand().equalsIgnoreCase("Left00")) {
-      glEventListener.lampState(0);
+      glEventListener.lampState(0,0);
     }
     else if (e.getActionCommand().equalsIgnoreCase("Left01")) {
-      glEventListener.lampState(1);
+      glEventListener.lampState(1,0);
     }
     else if (e.getActionCommand().equalsIgnoreCase("Left02")) {
-      glEventListener.lampState(2);
+      glEventListener.lampState(2,0);
+    }
+    else if (e.getActionCommand().equalsIgnoreCase("Right00")) {
+      glEventListener.lampState(0,1);
+    }
+    else if (e.getActionCommand().equalsIgnoreCase("Right01")) {
+      glEventListener.lampState(1,1);
+    }
+    else if (e.getActionCommand().equalsIgnoreCase("Right02")) {
+      glEventListener.lampState(2,1);
     }
     else if(e.getActionCommand().equalsIgnoreCase("quit"))
       System.exit(0);
