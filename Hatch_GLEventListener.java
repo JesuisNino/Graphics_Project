@@ -66,7 +66,6 @@ public class Hatch_GLEventListener implements GLEventListener {
     base.dispose(gl);
     sphere.dispose(gl);
     cube.dispose(gl);
-    cube2.dispose(gl);
   }
   
   
