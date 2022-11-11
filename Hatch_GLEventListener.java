@@ -161,6 +161,8 @@ public class Hatch_GLEventListener implements GLEventListener {
     textureSky1 = TextureLibrary.loadTexture(gl, "textures/cloud2.jpg");
     textureSky2 = TextureLibrary.loadTexture(gl, "textures/cloud2_specular.jpg");
     int[] textureId7 = TextureLibrary.loadTexture(gl, "textures/woodenFloor.jpg");
+    int[] textureId8 = TextureLibrary.loadTexture(gl, "textures/snake_body.jpg");
+    int[] textureId9 = TextureLibrary.loadTexture(gl, "textures/base.jpg");
         
     light = new Light(gl);
     light.setCamera(camera);
@@ -202,13 +204,15 @@ public class Hatch_GLEventListener implements GLEventListener {
     material = new Material(new Vec3(1.0f, 0.5f, 0.5f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 50.0f);
     modelMatrix = Mat4.multiply(Mat4Transform.scale(4,4,4), Mat4Transform.translate(0,0.5f,0));
     sphere = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId1, textureId2);
-
+    Model snakeBody = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId8);
 
     mesh = new Mesh(gl, Cube.vertices.clone(), Cube.indices.clone());
     shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
     material = new Material(new Vec3(1.0f, 0.5f, 0.5f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 50.0f);
     modelMatrix = Mat4.multiply(Mat4Transform.scale(4,4,4), Mat4Transform.translate(0,0.5f,0));
     cube = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId3, textureId4);
+    Model snakeHead = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId8);
+    Model baseCube = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId9);
 
     // table
     float wholeHeight = 5.5f;
@@ -272,8 +276,8 @@ public class Hatch_GLEventListener implements GLEventListener {
     float baseScale = 1.5f;
     float headLength = 1f;
     float headScale = 0.5f;
-    float stickLength = 1.5f;
-    float stickScale = 0.1f;
+    float stickLength = 1.7f;
+    float stickScale = 0.15f;
     
     lampRootL = new NameNode("root");
     lampMoveTranslate = new TransformNode("lamp transform",Mat4Transform.translate(xPosition - 5,0,0));
@@ -285,14 +289,14 @@ public class Hatch_GLEventListener implements GLEventListener {
       m = Mat4.multiply(m, Mat4Transform.scale(jointScale, jointScale, jointScale));
       m = Mat4.multiply(m, Mat4Transform.translate(0,(branchLength)*2,0));
       TransformNode jointTransformL = new TransformNode("joint transform", m);
-        ModelNode jointShapeL = new ModelNode("Sphere(joint)", sphere);
+        ModelNode jointShapeL = new ModelNode("Sphere(joint)", snakeBody);
 
     NameNode lampBaseL = new NameNode("lamp base");
     m = new Mat4(1);
     m = Mat4.multiply(m, Mat4Transform.scale(baseScale,baseHeight,baseScale));
     m = Mat4.multiply(m, Mat4Transform.translate(0,0.5f,0));
     TransformNode lampBaseTransformL = new TransformNode("lamp base transform", m);
-    ModelNode lampBaseShapeL = new ModelNode("Cube(lamp base)", cube);
+    ModelNode lampBaseShapeL = new ModelNode("Cube(lamp base)", baseCube);
 
     TransformNode translateToTop01L = new TransformNode("translate base and lower branch",Mat4Transform.translate(0f,0.5f,0f));
     lowerBranchRotateYL = new TransformNode("rotate lower branch Y", Mat4Transform.rotateAroundY(lowerAngleYL[0]));
@@ -302,7 +306,7 @@ public class Hatch_GLEventListener implements GLEventListener {
       m = Mat4Transform.scale(branchScale, branchLength, branchScale);
       m = Mat4.multiply(m, Mat4Transform.translate(0,0.5f,0));
       TransformNode makeLowerBranchL = new TransformNode("lower branch transform", m);
-      ModelNode lowerBranchShapeL = new ModelNode("Sphere(0)", sphere);
+      ModelNode lowerBranchShapeL = new ModelNode("Sphere(0)", snakeBody);
 
     upperBranchRotateL = new TransformNode("rotate upper branch",Mat4Transform.rotateAroundZ(upperAngleL[0]));
     TransformNode translateToTop02L = new TransformNode("translate two branches",Mat4Transform.translate(0,2.5f,0));
@@ -310,7 +314,7 @@ public class Hatch_GLEventListener implements GLEventListener {
       m = Mat4Transform.scale(branchScale, branchLength, branchScale);
       m = Mat4.multiply(m, Mat4Transform.translate(0,0.5f,0));
       TransformNode makeUpperBranchL = new TransformNode("upper branch transform", m);
-      ModelNode upperBranchShapeL = new ModelNode("Sphere(1)", sphere);
+      ModelNode upperBranchShapeL = new ModelNode("Sphere(1)", snakeBody);
 
     TransformNode translateToTop03L = new TransformNode("translate",Mat4Transform.translate(0,branchLength,0));
     headRotateL = new TransformNode("rotate lamp head",Mat4Transform.rotateAroundZ(headAngleL[0]));
@@ -320,14 +324,27 @@ public class Hatch_GLEventListener implements GLEventListener {
       m = Mat4.multiply(m, Mat4Transform.scale(headLength,headScale,headScale));
       m = Mat4.multiply(m, Mat4Transform.translate(0,0,0));
       TransformNode lampHeadTransformL = new TransformNode("lamp head transform", m);
-      ModelNode lampHeadShapeL = new ModelNode("Cube(lamp head)", cube);
-//
-//    NameNode stick = new NameNode("stick");
-//    m = new Mat4(1);
-//    m = Mat4.multiply(m, Mat4Transform.scale(stickLength,stickScale,stickScale));
-//    m = Mat4.multiply(m, Mat4Transform.translate(-jointScale,32,0));
-//    TransformNode stickTransform = new TransformNode("stick transform", m);
-//    ModelNode stickShape = new ModelNode("Cube(stick)", cube);
+      ModelNode lampHeadShapeL = new ModelNode("Cube(lamp head)", snakeHead);
+
+    TransformNode translateToTop04L = new TransformNode("translate",Mat4Transform.translate(-0.7f,1.8f,0));
+    TransformNode stickRotate1 = new TransformNode("rotate stick",Mat4Transform.rotateAroundZ(140));
+
+    NameNode stick1 = new NameNode("stick1");
+      m = new Mat4(1);
+      m = Mat4.multiply(m, Mat4Transform.scale(stickScale,stickLength,stickScale));
+      m = Mat4.multiply(m, Mat4Transform.translate(0,0,0));
+      TransformNode stickTransform1 = new TransformNode("stick transform", m);
+      ModelNode stickShape1 = new ModelNode("stick", snakeBody);
+
+    TransformNode translateToTop05L = new TransformNode("translate",Mat4Transform.translate(-0.9f,2.4f,0));
+    TransformNode stickRotate2 = new TransformNode("rotate stick",Mat4Transform.rotateAroundZ(100));
+    NameNode stick2 = new NameNode("stick1");
+      m = new Mat4(1);
+      m = Mat4.multiply(m, Mat4Transform.scale(stickScale,stickLength,stickScale));
+      m = Mat4.multiply(m, Mat4Transform.translate(0,0,0));
+      TransformNode stickTransform2 = new TransformNode("stick transform", m);
+      ModelNode stickShape2 = new ModelNode("stick", snakeBody);
+
 
     lampRootL.addChild(lampMoveTranslate);
       lampMoveTranslate.addChild(lampTranslateL);
@@ -343,16 +360,27 @@ public class Hatch_GLEventListener implements GLEventListener {
               lowerBranchL.addChild(jointL);
                 jointL.addChild(jointTransformL);
                   jointTransformL.addChild(jointShapeL);
+              lowerBranchL.addChild(translateToTop04L);
+                translateToTop04L.addChild(stickRotate1);
+                  stickRotate1.addChild(stick1);
+                    stick1.addChild(stickTransform1);
+                      stickTransform1.addChild(stickShape1);
+              lowerBranchL.addChild(translateToTop05L);
+                translateToTop05L.addChild(stickRotate2);
+                  stickRotate2.addChild(stick2);
+                    stick2.addChild(stickTransform2);
+                      stickTransform2.addChild(stickShape2);
               lowerBranchL.addChild(translateToTop02L);
                 translateToTop02L.addChild(upperBranchRotateL);
                   upperBranchRotateL.addChild(upperBranchL);
                     upperBranchL.addChild(makeUpperBranchL);
                       makeUpperBranchL.addChild(upperBranchShapeL);
-                  upperBranchL.addChild(translateToTop03L);
-                    translateToTop03L.addChild(headRotateL);
-                      headRotateL.addChild(lampHeadL);
-                        lampHeadL.addChild(lampHeadTransformL);
-                        lampHeadTransformL.addChild(lampHeadShapeL);
+                     makeUpperBranchL.addChild(upperBranchShapeL);
+                    upperBranchL.addChild(translateToTop03L);
+                      translateToTop03L.addChild(headRotateL);
+                        headRotateL.addChild(lampHeadL);
+                          lampHeadL.addChild(lampHeadTransformL);
+                          lampHeadTransformL.addChild(lampHeadShapeL);
 
     lampRootL.update();  // IMPORTANT - don't forget this
     //lampRootL.print(0, false);
@@ -387,7 +415,7 @@ public class Hatch_GLEventListener implements GLEventListener {
     m = Mat4.multiply(m, Mat4Transform.scale(baseScale,baseHeight,baseScale));
     m = Mat4.multiply(m, Mat4Transform.translate(0,0.5f,0));
     TransformNode lampBaseTransformR = new TransformNode("lamp base transform", m);
-    ModelNode lampBaseShapeR = new ModelNode("Cube(lamp base)", cube);
+    ModelNode lampBaseShapeR = new ModelNode("Cube(lamp base)", baseCube);
 
     TransformNode translateToTop01R = new TransformNode("translate base and lower branch",Mat4Transform.translate(0f,0.5f,0f));
     lowerBranchRotateYR = new TransformNode("rotate lower branch Y", Mat4Transform.rotateAroundY(lowerAngleYR[0]));
