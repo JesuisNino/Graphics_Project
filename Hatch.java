@@ -49,18 +49,6 @@ public class Hatch extends JFrame implements ActionListener {
       b = new JButton("camera Z");
       b.addActionListener(this);
       p.add(b);
-      b = new JButton("start");
-      b.addActionListener(this);
-      p.add(b);
-      b = new JButton("stop");
-      b.addActionListener(this);
-      p.add(b);
-      b = new JButton("increase X");
-      b.addActionListener(this);
-      p.add(b);
-      b = new JButton("decrease X");
-      b.addActionListener(this);
-      p.add(b);
       b = new JButton("Left00");
       b.addActionListener(this);
       p.add(b);
@@ -101,18 +89,6 @@ public class Hatch extends JFrame implements ActionListener {
     else if (e.getActionCommand().equalsIgnoreCase("camera Z")) {
       camera.setCamera(Camera.CameraType.Z);
       canvas.requestFocusInWindow();
-    }
-    else if (e.getActionCommand().equalsIgnoreCase("start")) {
-      glEventListener.startAnimation();
-    }
-    else if (e.getActionCommand().equalsIgnoreCase("stop")) {
-      glEventListener.stopAnimation();
-    }
-    else if (e.getActionCommand().equalsIgnoreCase("increase X")) {
-      glEventListener.incXPosition();
-    }
-    else if (e.getActionCommand().equalsIgnoreCase("decrease X")) {
-      glEventListener.decXPosition();
     }
     else if (e.getActionCommand().equalsIgnoreCase("Left00")) {
       glEventListener.lampState(0,0);

@@ -78,34 +78,6 @@ public class Hatch_GLEventListener implements GLEventListener {
    
   private boolean animation = false;
   private double savedTime = 0;
-   
-  public void startAnimation() {
-    animation = true;
-    startTime = getSeconds()-savedTime;
-  }
-   
-  public void stopAnimation() {
-    animation = false;
-    double elapsedTime = getSeconds()-startTime;
-    savedTime = elapsedTime;
-  }
-   
-  public void incXPosition() {
-    xPosition += 0.5f;
-    if (xPosition>5f) xPosition = 5f;
-    updateMove();
-  }
-   
-  public void decXPosition() {
-    xPosition -= 0.5f;
-    if (xPosition<-5f) xPosition = -5f;
-    updateMove();
-  }
- 
-  private void updateMove() {
-    lampMoveTranslate.setTransform(Mat4Transform.translate(xPosition,0,0));
-    lampMoveTranslate.update();
-  }
 
   private int currentState, currentStateL, currentStateR=0;
   private int state,lampNum, currentLampNum;
@@ -187,8 +159,8 @@ public class Hatch_GLEventListener implements GLEventListener {
     int[] textureId2 = TextureLibrary.loadTexture(gl, "textures/jade_specular.jpg");
     int[] textureId3 = TextureLibrary.loadTexture(gl, "textures/container2.jpg");
     int[] textureId4 = TextureLibrary.loadTexture(gl, "textures/container2_specular.jpg");
-    int[] textureId5 = TextureLibrary.loadTexture(gl, "textures/wattBook.jpg");
-    int[] textureId6 = TextureLibrary.loadTexture(gl, "textures/wattBook_specular.jpg");
+    textureSky1 = TextureLibrary.loadTexture(gl, "textures/cloud2.jpg");
+    textureSky2 = TextureLibrary.loadTexture(gl, "textures/cloud2_specular.jpg");
     int[] textureId7 = TextureLibrary.loadTexture(gl, "textures/woodenFloor.jpg");
         
     light = new Light(gl);
@@ -196,21 +168,21 @@ public class Hatch_GLEventListener implements GLEventListener {
     
     Mesh mesh = new Mesh(gl, TwoTriangles.vertices.clone(), TwoTriangles.indices.clone());
     Shader shader = new Shader(gl, "vs_tt_05.txt", "fs_tt_05.txt");
-    Material material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 32.0f);
+    Material material = new Material(new Vec3(0.5f, 0.5f, 0.5f), new Vec3(0.5f, 0.5f, 0.5f), new Vec3(0.3f, 0.3f, 0.3f), 50.0f);
     Mat4 modelMatrix = Mat4Transform.scale(16,1f,16);
     floor = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId7);
 
     mesh = new Mesh(gl, TwoTriangles.vertices.clone(), TwoTriangles.indices.clone());
-    shader = new Shader(gl, "vs_tt_05.txt", "fs_tt_05.txt");
-    material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 32.0f);
+    skyShader = new Shader(gl, "vs_sky.txt", "fs_sky.txt");
+    material = new Material(new Vec3(0.5f, 0.5f, 0.5f), new Vec3(0.5f, 0.5f, 0.5f), new Vec3(0.3f, 0.3f, 0.3f), 32.0f);
     modelMatrix = Mat4Transform.scale(16,1f,10);
     modelMatrix = Mat4.multiply(Mat4Transform.rotateAroundX(90), modelMatrix);
     modelMatrix = Mat4.multiply(Mat4Transform.translate(0,5f,-8f), modelMatrix);
-    backWall = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId0);
+    backWall = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureSky1, textureSky2);
 
     mesh = new Mesh(gl, TwoTriangles.vertices.clone(), TwoTriangles.indices.clone());
     shader = new Shader(gl, "vs_tt_05.txt", "fs_tt_05.txt");
-    material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 32.0f);
+    material = new Material(new Vec3(0.5f, 0.5f, 0.5f), new Vec3(0.5f, 0.5f, 0.5f), new Vec3(0.3f, 0.3f, 0.3f), 50.0f);
     modelMatrix = Mat4Transform.scale(16,1f,10);
     modelMatrix = Mat4.multiply(Mat4Transform.rotateAroundY(90), modelMatrix);
     modelMatrix = Mat4.multiply(Mat4Transform.rotateAroundZ(-90), modelMatrix);
@@ -219,7 +191,7 @@ public class Hatch_GLEventListener implements GLEventListener {
 
     mesh = new Mesh(gl, TwoTriangles.vertices.clone(), TwoTriangles.indices.clone());
     shader = new Shader(gl, "vs_tt_05.txt", "fs_tt_05.txt");
-    material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 32.0f);
+    material = new Material(new Vec3(0.5f, 0.5f, 0.5f), new Vec3(0.5f, 0.5f, 0.5f), new Vec3(0.3f, 0.3f, 0.3f), 50.0f);
     modelMatrix = Mat4Transform.scale(16,1f,10);
     modelMatrix = Mat4.multiply(Mat4Transform.rotateAroundY(-90), modelMatrix);
     modelMatrix = Mat4.multiply(Mat4Transform.rotateAroundZ(90), modelMatrix);
@@ -228,18 +200,16 @@ public class Hatch_GLEventListener implements GLEventListener {
     
     mesh = new Mesh(gl, Sphere.vertices.clone(), Sphere.indices.clone());
     shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
-    material = new Material(new Vec3(1.0f, 0.5f, 0.31f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 32.0f);
+    material = new Material(new Vec3(1.0f, 0.5f, 0.5f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 50.0f);
     modelMatrix = Mat4.multiply(Mat4Transform.scale(4,4,4), Mat4Transform.translate(0,0.5f,0));
     sphere = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId1, textureId2);
 
 
     mesh = new Mesh(gl, Cube.vertices.clone(), Cube.indices.clone());
     shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
-    material = new Material(new Vec3(1.0f, 0.5f, 0.31f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 32.0f);
+    material = new Material(new Vec3(1.0f, 0.5f, 0.5f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 50.0f);
     modelMatrix = Mat4.multiply(Mat4Transform.scale(4,4,4), Mat4Transform.translate(0,0.5f,0));
     cube = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId3, textureId4);
-    
-    cube2 = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId5, textureId6); 
 
     // table
     float wholeHeight = 5.5f;
@@ -484,7 +454,13 @@ public class Hatch_GLEventListener implements GLEventListener {
     //lampRootR.print(0, false);
     //System.exit(0);
   }
- 
+
+  private  Shader skyShader;
+  private int[] textureSky1 = new int[1];
+  private int[] textureSky2 = new int[1];
+  private int[] vertexArrayId = new int[1];
+  private int[] indicesSky = {0,1,2};
+
   private void render(GL3 gl) {
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
     light.setPosition(getLightPosition());  // changing light position each frame
@@ -507,7 +483,6 @@ public class Hatch_GLEventListener implements GLEventListener {
     lampRootL.draw(gl);
     lampRootR.draw(gl);
     eggRoot.draw(gl);
-
   }
 
   private void updateEgg() {
