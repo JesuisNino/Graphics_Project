@@ -155,7 +155,8 @@ public class Hatch_GLEventListener implements GLEventListener {
     }else {
       currentState = state;
       animation = false;
-    }
+      }
+
     }
   
   // ***************************************************
@@ -325,8 +326,8 @@ public class Hatch_GLEventListener implements GLEventListener {
     ModelNode lampBaseShapeL = new ModelNode("Cube(lamp base)", cube);
 
     TransformNode translateToTop01L = new TransformNode("translate base and lower branch",Mat4Transform.translate(0f,0.5f,0f));
-    lowerBranchRotateYL = new TransformNode("rotate lower branch Y", Mat4Transform.rotateAroundY(lowerAngleYL[currentState]));
-    lowerBranchRotateZL = new TransformNode("rotate lower branch Z", Mat4Transform.rotateAroundZ(lowerAngleZL[currentState]));
+    lowerBranchRotateYL = new TransformNode("rotate lower branch Y", Mat4Transform.rotateAroundY(lowerAngleYL[0]));
+    lowerBranchRotateZL = new TransformNode("rotate lower branch Z", Mat4Transform.rotateAroundZ(lowerAngleZL[0]));
 
     NameNode lowerBranchL = new NameNode("lower branch");
       m = Mat4Transform.scale(branchScale, branchLength, branchScale);
@@ -334,7 +335,7 @@ public class Hatch_GLEventListener implements GLEventListener {
       TransformNode makeLowerBranchL = new TransformNode("lower branch transform", m);
       ModelNode lowerBranchShapeL = new ModelNode("Sphere(0)", sphere);
 
-    upperBranchRotateL = new TransformNode("rotate upper branch",Mat4Transform.rotateAroundZ(upperAngleL[currentState]));
+    upperBranchRotateL = new TransformNode("rotate upper branch",Mat4Transform.rotateAroundZ(upperAngleL[0]));
     TransformNode translateToTop02L = new TransformNode("translate two branches",Mat4Transform.translate(0,2.5f,0));
     NameNode upperBranchL = new NameNode("upper branch");
       m = Mat4Transform.scale(branchScale, branchLength, branchScale);
@@ -343,7 +344,7 @@ public class Hatch_GLEventListener implements GLEventListener {
       ModelNode upperBranchShapeL = new ModelNode("Sphere(1)", sphere);
 
     TransformNode translateToTop03L = new TransformNode("translate",Mat4Transform.translate(0,branchLength,0));
-    headRotateL = new TransformNode("rotate lamp head",Mat4Transform.rotateAroundZ(headAngleL[currentState]));
+    headRotateL = new TransformNode("rotate lamp head",Mat4Transform.rotateAroundZ(headAngleL[0]));
 
     NameNode lampHeadL = new NameNode("lamp head");
       m = new Mat4(1);
@@ -420,8 +421,8 @@ public class Hatch_GLEventListener implements GLEventListener {
     ModelNode lampBaseShapeR = new ModelNode("Cube(lamp base)", cube);
 
     TransformNode translateToTop01R = new TransformNode("translate base and lower branch",Mat4Transform.translate(0f,0.5f,0f));
-    lowerBranchRotateYR = new TransformNode("rotate lower branch Y", Mat4Transform.rotateAroundY(lowerAngleYR[currentState]));
-    lowerBranchRotateZR = new TransformNode("rotate lower branch Z", Mat4Transform.rotateAroundZ(lowerAngleZR[currentState]));
+    lowerBranchRotateYR = new TransformNode("rotate lower branch Y", Mat4Transform.rotateAroundY(lowerAngleYR[0]));
+    lowerBranchRotateZR = new TransformNode("rotate lower branch Z", Mat4Transform.rotateAroundZ(lowerAngleZR[0]));
 
     NameNode lowerBranchR = new NameNode("lower branch");
     m = Mat4Transform.scale(branchScale, branchLength, branchScale);
@@ -429,7 +430,7 @@ public class Hatch_GLEventListener implements GLEventListener {
     TransformNode makeLowerBranchR = new TransformNode("lower branch transform", m);
     ModelNode lowerBranchShapeR = new ModelNode("Sphere(0)", sphere);
 
-    upperBranchRotateR = new TransformNode("rotate upper branch",Mat4Transform.rotateAroundZ(upperAngleR[currentState]));
+    upperBranchRotateR = new TransformNode("rotate upper branch",Mat4Transform.rotateAroundZ(upperAngleR[0]));
     TransformNode translateToTop02R = new TransformNode("translate two branches",Mat4Transform.translate(0,3.6f,0));
     NameNode upperBranchR = new NameNode("upper branch");
     m = Mat4Transform.scale(branchScale, branchLength, branchScale);
@@ -438,7 +439,7 @@ public class Hatch_GLEventListener implements GLEventListener {
     ModelNode upperBranchShapeR = new ModelNode("Sphere(1)", sphere);
 
     TransformNode translateToTop03R = new TransformNode("translate",Mat4Transform.translate(0,3.5f,0));
-    headRotateR = new TransformNode("rotate lamp head",Mat4Transform.rotateAroundZ(headAngleR[currentState]));
+    headRotateR = new TransformNode("rotate lamp head",Mat4Transform.rotateAroundZ(headAngleR[0]));
 
     NameNode lampHeadR = new NameNode("lamp head");
     m = new Mat4(1);
