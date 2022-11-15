@@ -154,7 +154,7 @@ public class LeftLamp{
     private int[] upperAngleL = {-100, -20, 75};
     private int[] headAngleL = {75, 70, -40};
 
-    private void moveLamp(int lamp, float lowerAngleY, float lowerAngleZ, float upperAngle, float headAngle, double elapsedTime) {
+    public void moveLamp(int lamp, float lowerAngleY, float lowerAngleZ, float upperAngle, float headAngle, double elapsedTime) {
         float rotateAngleUpper, rotateAngleHead, rotateAngleLowerZ, rotateAngleLowerY;
         currentLampNum = 0;
         rotateAngleUpper = upperAngleL[currentState] + upperAngle * (float) Math.sin(elapsedTime);
