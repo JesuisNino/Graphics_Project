@@ -159,8 +159,10 @@ public class Hatch_GLEventListener implements GLEventListener {
     light = new Light(gl);
     light.setCamera(camera);
 
-    // room
+    // Initialise the room, table and egg
     room = new Room(gl, camera, light, textureId7, textureId0);
+    table = new Table(gl, camera, light, textureId3, textureId4);
+    egg = new Egg(gl, camera, light, textureId1, textureId2);
 
     Mesh mesh = new Mesh(gl, Sphere.vertices.clone(), Sphere.indices.clone());
     Shader shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
@@ -168,6 +170,7 @@ public class Hatch_GLEventListener implements GLEventListener {
     Mat4 modelMatrix = Mat4.multiply(Mat4Transform.scale(4,4,4), Mat4Transform.translate(0,0.5f,0));
     sphere = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId1, textureId2);
     Model snakeBody = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId8);
+    Model eye = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId9);
 
     mesh = new Mesh(gl, Cube.vertices.clone(), Cube.indices.clone());
     shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
@@ -177,12 +180,6 @@ public class Hatch_GLEventListener implements GLEventListener {
     Model snakeHead = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId8);
     Model baseCube = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId9);
 
-    // table
-    table = new Table(gl, camera, light, textureId3, textureId4);
-
-    // egg
-
-    egg = new Egg(gl, camera, light, textureId1, textureId2);
 
     // Left Lamp
 
@@ -235,7 +232,6 @@ public class Hatch_GLEventListener implements GLEventListener {
 
     TransformNode translateToTop03L = new TransformNode("translate",Mat4Transform.translate(0,branchLength,0));
     headRotateL = new TransformNode("rotate lamp head",Mat4Transform.rotateAroundZ(headAngleL[0]));
-
     NameNode lampHeadL = new NameNode("lamp head");
       m = new Mat4(1);
       m = Mat4.multiply(m, Mat4Transform.scale(headLength,headScale,headScale));
@@ -245,7 +241,6 @@ public class Hatch_GLEventListener implements GLEventListener {
 
     TransformNode translateToTop04L = new TransformNode("translate",Mat4Transform.translate(-0.7f,1.8f,0));
     TransformNode stickRotate1 = new TransformNode("rotate stick",Mat4Transform.rotateAroundZ(140));
-
     NameNode stick1 = new NameNode("stick1");
       m = new Mat4(1);
       m = Mat4.multiply(m, Mat4Transform.scale(stickScale,stickLength,stickScale));
@@ -255,13 +250,30 @@ public class Hatch_GLEventListener implements GLEventListener {
 
     TransformNode translateToTop05L = new TransformNode("translate",Mat4Transform.translate(-0.9f,2.4f,0));
     TransformNode stickRotate2 = new TransformNode("rotate stick",Mat4Transform.rotateAroundZ(100));
-    NameNode stick2 = new NameNode("stick1");
+    NameNode stick2 = new NameNode("stick2");
       m = new Mat4(1);
       m = Mat4.multiply(m, Mat4Transform.scale(stickScale,stickLength,stickScale));
       m = Mat4.multiply(m, Mat4Transform.translate(0,0,0));
       TransformNode stickTransform2 = new TransformNode("stick transform", m);
       ModelNode stickShape2 = new ModelNode("stick", snakeBody);
 
+    float eyeScale = 0.4f;
+
+    TransformNode translateToTop06L = new TransformNode("translate",Mat4Transform.translate(-0.1f,0.45f,0.2f));
+    NameNode eye1 = new NameNode("eye1");
+    m = new Mat4(1);
+    m = Mat4.multiply(m, Mat4Transform.scale(eyeScale, eyeScale, eyeScale));
+    m = Mat4.multiply(m, Mat4Transform.translate(0,0,0));
+    TransformNode eyeTransform1 = new TransformNode("eye transform", m);
+    ModelNode eyeShape1 = new ModelNode("eye shape", eye);
+
+    TransformNode translateToTop07L = new TransformNode("translate",Mat4Transform.translate(-0.1f,0.45f,-0.2f));
+    NameNode eye2 = new NameNode("eye1");
+    m = new Mat4(1);
+    m = Mat4.multiply(m, Mat4Transform.scale(eyeScale, eyeScale, eyeScale));
+    m = Mat4.multiply(m, Mat4Transform.translate(0,0,0));
+    TransformNode eyeTransform2 = new TransformNode("eye transform", m);
+    ModelNode eyeShape2 = new ModelNode("eye shape", eye);
 
     lampRootL.addChild(lampMoveTranslate);
       lampMoveTranslate.addChild(lampTranslateL);
@@ -297,7 +309,15 @@ public class Hatch_GLEventListener implements GLEventListener {
                       translateToTop03L.addChild(headRotateL);
                         headRotateL.addChild(lampHeadL);
                           lampHeadL.addChild(lampHeadTransformL);
-                          lampHeadTransformL.addChild(lampHeadShapeL);
+                            lampHeadTransformL.addChild(lampHeadShapeL);
+                          lampHeadL.addChild(translateToTop06L);
+                            translateToTop06L.addChild(eye1);
+                                eye1.addChild(eyeTransform1);
+                                  eyeTransform1.addChild(eyeShape1);
+                          lampHeadL.addChild(translateToTop07L);
+                            translateToTop07L.addChild(eye2);
+                                eye2.addChild(eyeTransform2);
+                                  eyeTransform2.addChild(eyeShape2);
 
     lampRootL.update();  // IMPORTANT - don't forget this
     //lampRootL.print(0, false);
