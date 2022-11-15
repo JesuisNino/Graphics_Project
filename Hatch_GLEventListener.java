@@ -78,7 +78,7 @@ public class Hatch_GLEventListener implements GLEventListener {
   private boolean animation = false;
   private double savedTime = 0;
 
-  private int currentState, currentStateL, currentStateR=0;
+  private int currentState = 0;
   private int state,lampNum, currentLampNum;
   private int[] lowerAngleZL = {45, -45, -30};
   private int[] lowerAngleYL = {0, 60, -90};
@@ -140,10 +140,10 @@ public class Hatch_GLEventListener implements GLEventListener {
   private Mat4 perspective;
   private Model floor, backWall, leftWall, rightWall, sphere, base, table, tableLeg1, tableLeg2, tableLeg3, tableLeg4, cube, cube2;
   private Light light;
-  private SGNode eggRoot, lampRootL, lampRootR;
+  private Egg egg;
+  private SGNode lampRootL, lampRootR;
   
   private float xPosition = 0;
-  private TransformNode jumpY, translateX, rotateAllY, rotateAllZ;
   private TransformNode lowerBranchRotateZL, lowerBranchRotateYL, upperBranchRotateL, headRotateL;
   private TransformNode lowerBranchRotateZR, lowerBranchRotateYR, upperBranchRotateR, headRotateR;
   private TransformNode lampMoveTranslate;
@@ -245,30 +245,10 @@ public class Hatch_GLEventListener implements GLEventListener {
 
     // egg
 
-    eggRoot = new NameNode("egg");
-    jumpY = new TransformNode("jump", Mat4Transform.translate(0,jumpYHeight,0));
-    translateX = new TransformNode("translate", Mat4Transform.translate(xPosition,0,0));
-    rotateAllY = new TransformNode("rotateAroundZ", Mat4Transform.rotateAroundX(0));
-    rotateAllZ = new TransformNode("rotateAroundZ", Mat4Transform.rotateAroundZ(0));
-
-    NameNode egg = new NameNode("egg");
-    Mat4 m = Mat4Transform.scale(2,2.5f,2);
-    m = Mat4.multiply(m, Mat4Transform.translate(0, 1.9f,0));
-    TransformNode makeEgg = new TransformNode("scale(2,2.5f,2);translate(0, 1.9f,0)", m);
-    ModelNode eggNode = new ModelNode("Sphere(egg)", sphere);
-
-    eggRoot.addChild(translateX);
-      translateX.addChild(jumpY);
-        jumpY.addChild(rotateAllY);
-         rotateAllY.addChild(rotateAllZ);
-          rotateAllZ.addChild(egg);
-            egg.addChild(makeEgg);
-              makeEgg.addChild(eggNode);
-
-    eggRoot.update();
+    egg = new Egg(gl, camera, light, textureId1, textureId2);
 
     // Left Lamp
-    
+
     float jointScale = 0.5f;
     float branchLength = 2.5f;
     float branchScale = 0.3f;
@@ -278,14 +258,14 @@ public class Hatch_GLEventListener implements GLEventListener {
     float headScale = 0.5f;
     float stickLength = 1.7f;
     float stickScale = 0.15f;
-    
+
     lampRootL = new NameNode("root");
     lampMoveTranslate = new TransformNode("lamp transform",Mat4Transform.translate(xPosition - 5,0,0));
 
     TransformNode lampTranslateL = new TransformNode("lamp transform",Mat4Transform.translate(0,0,0));
 
     NameNode jointL = new NameNode("joint");
-      m = new Mat4(1);
+      Mat4 m = new Mat4(1);
       m = Mat4.multiply(m, Mat4Transform.scale(jointScale, jointScale, jointScale));
       m = Mat4.multiply(m, Mat4Transform.translate(0,(branchLength)*2,0));
       TransformNode jointTransformL = new TransformNode("joint transform", m);
@@ -502,6 +482,7 @@ public class Hatch_GLEventListener implements GLEventListener {
     tableLeg2.render(gl);
     tableLeg3.render(gl);
     tableLeg4.render(gl);
+    egg.render(gl);
     updateEgg();
     if(animation && (lampNum != currentLampNum || currentState != state)) {
       if (lampNum == 0) moveLamp(0, lowerAngleYL[state] - lowerAngleYL[currentState], lowerAngleZL[state] - lowerAngleZL[currentState], upperAngleL[state] - upperAngleL[currentState], headAngleL[state] - headAngleL[currentState]);
@@ -509,18 +490,11 @@ public class Hatch_GLEventListener implements GLEventListener {
     }
     lampRootL.draw(gl);
     lampRootR.draw(gl);
-    eggRoot.draw(gl);
   }
 
   private void updateEgg() {
     double elapsedTime = getSeconds()-startTime;
-    rotateAllAngleY = rotateAllAngleStart * (float) Math.sin(elapsedTime * 6);
-    rotateAllAngleZ = rotateAllAngleStart * (float) Math.cos(elapsedTime * 4);
-    rotateAllY.setTransform(Mat4Transform.rotateAroundX(rotateAllAngleY));
-    rotateAllZ.setTransform(Mat4Transform.rotateAroundZ(rotateAllAngleZ));
-    jumpYHeight = jumpYStart + jumpHeght + (float) Math.sin(elapsedTime * 12) * jumpHeght;
-    jumpY.setTransform(Mat4Transform.translate(0, jumpYHeight, 0));
-    eggRoot.update(); // IMPORTANT – the scene graph has changed
+    egg.updateEgg(elapsedTime);
   }
 
   
