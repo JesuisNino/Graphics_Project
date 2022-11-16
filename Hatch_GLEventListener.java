@@ -260,20 +260,20 @@ public class Hatch_GLEventListener implements GLEventListener {
     float eyeScale = 0.4f;
 
     TransformNode translateToTop06L = new TransformNode("translate",Mat4Transform.translate(-0.1f,0.45f,0.2f));
-    NameNode eye1 = new NameNode("eye1");
+    NameNode eye1L = new NameNode("eye1");
     m = new Mat4(1);
     m = Mat4.multiply(m, Mat4Transform.scale(eyeScale, eyeScale, eyeScale));
     m = Mat4.multiply(m, Mat4Transform.translate(0,0,0));
-    TransformNode eyeTransform1 = new TransformNode("eye transform", m);
-    ModelNode eyeShape1 = new ModelNode("eye shape", eye);
+    TransformNode eyeTransform1L = new TransformNode("eye transform", m);
+    ModelNode eyeShape1L = new ModelNode("eye shape", eye);
 
     TransformNode translateToTop07L = new TransformNode("translate",Mat4Transform.translate(-0.1f,0.45f,-0.2f));
-    NameNode eye2 = new NameNode("eye1");
+    NameNode eye2L = new NameNode("eye1");
     m = new Mat4(1);
     m = Mat4.multiply(m, Mat4Transform.scale(eyeScale, eyeScale, eyeScale));
     m = Mat4.multiply(m, Mat4Transform.translate(0,0,0));
-    TransformNode eyeTransform2 = new TransformNode("eye transform", m);
-    ModelNode eyeShape2 = new ModelNode("eye shape", eye);
+    TransformNode eyeTransform2L = new TransformNode("eye transform", m);
+    ModelNode eyeShape2L = new ModelNode("eye shape", eye);
 
     lampRootL.addChild(lampMoveTranslate);
       lampMoveTranslate.addChild(lampTranslateL);
@@ -311,13 +311,13 @@ public class Hatch_GLEventListener implements GLEventListener {
                           lampHeadL.addChild(lampHeadTransformL);
                             lampHeadTransformL.addChild(lampHeadShapeL);
                           lampHeadL.addChild(translateToTop06L);
-                            translateToTop06L.addChild(eye1);
-                                eye1.addChild(eyeTransform1);
-                                  eyeTransform1.addChild(eyeShape1);
+                            translateToTop06L.addChild(eye1L);
+                                eye1L.addChild(eyeTransform1L);
+                                  eyeTransform1L.addChild(eyeShape1L);
                           lampHeadL.addChild(translateToTop07L);
-                            translateToTop07L.addChild(eye2);
-                                eye2.addChild(eyeTransform2);
-                                  eyeTransform2.addChild(eyeShape2);
+                            translateToTop07L.addChild(eye2L);
+                                eye2L.addChild(eyeTransform2L);
+                                  eyeTransform2L.addChild(eyeShape2L);
 
     lampRootL.update();  // IMPORTANT - don't forget this
     //lampRootL.print(0, false);
@@ -332,8 +332,6 @@ public class Hatch_GLEventListener implements GLEventListener {
     baseScale = 3f;
     headLength = 2f;
     headScale = 0.7f;
-    stickLength = 1.5f;
-    stickScale = 0.1f;
 
     lampRootR = new NameNode("root");
     lampMoveTranslate = new TransformNode("lamp transform",Mat4Transform.translate(xPosition + 5,0,0));
@@ -381,38 +379,57 @@ public class Hatch_GLEventListener implements GLEventListener {
     m = Mat4.multiply(m, Mat4Transform.translate(0,0,0));
     TransformNode lampHeadTransformR = new TransformNode("lamp head transform", m);
     ModelNode lampHeadShapeR = new ModelNode("Cube(lamp head)", cube);
-//
-//    NameNode stick = new NameNode("stick");
-//    m = new Mat4(1);
-//    m = Mat4.multiply(m, Mat4Transform.scale(stickLength,stickScale,stickScale));
-//    m = Mat4.multiply(m, Mat4Transform.translate(-jointScale,32,0));
-//    TransformNode stickTransform = new TransformNode("stick transform", m);
-//    ModelNode stickShape = new ModelNode("Cube(stick)", cube);
+
+    eyeScale = 0.6f;
+
+    TransformNode translateToTop06R = new TransformNode("translate",Mat4Transform.translate(-0.1f,0.2f,0.6f));
+    NameNode eye1R = new NameNode("eye1");
+    m = new Mat4(1);
+    m = Mat4.multiply(m, Mat4Transform.scale(eyeScale, eyeScale, eyeScale));
+    m = Mat4.multiply(m, Mat4Transform.translate(0,0,0));
+    TransformNode eyeTransform1R = new TransformNode("eye transform", m);
+    ModelNode eyeShape1R = new ModelNode("eye shape", eye);
+
+    TransformNode translateToTop07R = new TransformNode("translate",Mat4Transform.translate(-0.1f,0.2f,-0.6f));
+    NameNode eye2R = new NameNode("eye2");
+    m = new Mat4(1);
+    m = Mat4.multiply(m, Mat4Transform.scale(eyeScale, eyeScale, eyeScale));
+    m = Mat4.multiply(m, Mat4Transform.translate(0,0,0));
+    TransformNode eyeTransform2R = new TransformNode("eye transform", m);
+    ModelNode eyeShape2R = new ModelNode("eye shape", eye);
 
     lampRootR.addChild(lampMoveTranslate);
-    lampMoveTranslate.addChild(lampTranslateR);
-    lampTranslateR.addChild(lampBaseR);
-    lampBaseR.addChild(lampBaseTransformR);
-    lampBaseTransformR.addChild(lampBaseShapeR);
-    lampBaseR.addChild(translateToTop01R);
-    translateToTop01R.addChild(lowerBranchRotateYR);
-    lowerBranchRotateYR.addChild(lowerBranchRotateZR);
-    lowerBranchRotateZR.addChild(lowerBranchR);
-    lowerBranchR.addChild(makeLowerBranchR);
-    makeLowerBranchR.addChild(lowerBranchShapeR);
-    lowerBranchR.addChild(jointR);
-    jointR.addChild(jointTransformR);
-    jointTransformR.addChild(jointShapeR);
-    lowerBranchR.addChild(translateToTop02R);
-    translateToTop02R.addChild(upperBranchRotateR);
-    upperBranchRotateR.addChild(upperBranchR);
-    upperBranchR.addChild(makeUpperBranchR);
-    makeUpperBranchR.addChild(upperBranchShapeR);
-    upperBranchR.addChild(translateToTop03R);
-    translateToTop03R.addChild(headRotateR);
-    headRotateR.addChild(lampHeadR);
-    lampHeadR.addChild(lampHeadTransformR);
-    lampHeadTransformR.addChild(lampHeadShapeR);
+      lampMoveTranslate.addChild(lampTranslateR);
+       lampTranslateR.addChild(lampBaseR);
+        lampBaseR.addChild(lampBaseTransformR);
+          lampBaseTransformR.addChild(lampBaseShapeR);
+        lampBaseR.addChild(translateToTop01R);
+          translateToTop01R.addChild(lowerBranchRotateYR);
+            lowerBranchRotateYR.addChild(lowerBranchRotateZR);
+              lowerBranchRotateZR.addChild(lowerBranchR);
+                lowerBranchR.addChild(makeLowerBranchR);
+                  makeLowerBranchR.addChild(lowerBranchShapeR);
+                lowerBranchR.addChild(jointR);
+                  jointR.addChild(jointTransformR);
+                    jointTransformR.addChild(jointShapeR);
+                lowerBranchR.addChild(translateToTop02R);
+                  translateToTop02R.addChild(upperBranchRotateR);
+                    upperBranchRotateR.addChild(upperBranchR);
+                      upperBranchR.addChild(makeUpperBranchR);
+                        makeUpperBranchR.addChild(upperBranchShapeR);
+                      upperBranchR.addChild(translateToTop03R);
+                        translateToTop03R.addChild(headRotateR);
+                          headRotateR.addChild(lampHeadR);
+                            lampHeadR.addChild(lampHeadTransformR);
+                              lampHeadTransformR.addChild(lampHeadShapeR);
+                            lampHeadR.addChild(translateToTop06R);
+                              translateToTop06R.addChild(eye1R);
+                                eye1R.addChild(eyeTransform1R);
+                                  eyeTransform1R.addChild(eyeShape1R);
+                            lampHeadR.addChild(translateToTop07R);
+                              translateToTop07R.addChild(eye2R);
+                                eye2R.addChild(eyeTransform2R);
+                                  eyeTransform2R.addChild(eyeShape2R);
 
     lampRootR.update();  // IMPORTANT - don't forget this
     //lampRootR.print(0, false);
