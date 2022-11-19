@@ -37,6 +37,7 @@ public class Egg{
         NameNode egg = new NameNode("egg");
         Mat4 m = Mat4Transform.scale(2,2.5f,2);
         m = Mat4.multiply(m, Mat4Transform.translate(0, 1.9f,0));
+        m = Mat4.multiply(m, Mat4Transform.rotateAroundY(180));
         TransformNode makeEgg = new TransformNode("scale(2,2.5f,2);translate(0, 1.9f,0)", m);
         ModelNode eggNode = new ModelNode("Sphere(egg)", sphere);
 

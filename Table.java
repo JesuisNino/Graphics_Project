@@ -12,7 +12,7 @@ public class Table{
 
     private Model base, table, tableLeg1, tableLeg2, tableLeg3, tableLeg4;
 
-    public Table(GL3 gl, Camera camera, Light light, int[] textureId1, int[] textureId2) {
+    public Table(GL3 gl, Camera camera, Light light, int[] textureId1, int[] textureId2, int[] textureId3, int[] textureId4) {
         // table
         float wholeHeight = 5.5f;
         float tableHeight = 0.5f;
@@ -40,7 +40,7 @@ public class Table{
 
         wholeHeight = (wholeHeight + tableHeight)*2 + 0.5f;
         modelMatrix = Mat4.multiply(Mat4Transform.scale(1.5f,tableHeight/2,1.5f), Mat4Transform.translate(0, wholeHeight,0));
-        base = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId1, textureId2);
+        base = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId3, textureId4);
 
     }
 
