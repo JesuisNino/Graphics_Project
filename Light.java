@@ -11,17 +11,27 @@ public class Light {
   private Shader shader;
   private Camera camera;
     
-  public Light(GL3 gl) {
+  public Light(GL3 gl, int i) {
     material = new Material();
-    material.setAmbient(0.5f, 0.5f, 0.5f);
-    material.setDiffuse(0.8f, 0.8f, 0.8f);
-    material.setSpecular(0.8f, 0.8f, 0.8f);
+    if (i == 0){
+      material.setAmbient(0f, 0f, 0f);
+      material.setDiffuse(0f, 0f, 0f);
+      material.setSpecular(0f, 0f, 0f);
+    }else if (i == 1){
+      material.setAmbient(1f, 1f, 1f);
+      material.setDiffuse(1f, 1f, 1f);
+      material.setSpecular(1f, 1f, 1f);
+    }else{
+      material.setAmbient(0.5f, 0.5f, 0.5f);
+      material.setDiffuse(0.8f, 0.8f, 0.8f);
+      material.setSpecular(0.8f, 0.8f, 0.8f);
+    }
     position = new Vec3(3f,2f,1f);
     model = new Mat4(1);
     shader = new Shader(gl, "vs_light_01.txt", "fs_light_01.txt");
     fillBuffers(gl);
   }
-  
+
   public void setPosition(Vec3 v) {
     position.x = v.x;
     position.y = v.y;
