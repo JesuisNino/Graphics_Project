@@ -9,7 +9,7 @@ public class Model {
   private int[] textureId1; 
   private int[] textureId2; 
   private Material material;
-  private Shader shader;
+  public Shader shader;
   private Mat4 modelMatrix;
   private Camera camera;
   private Light light;

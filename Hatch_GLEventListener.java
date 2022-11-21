@@ -50,16 +50,6 @@ public class Hatch_GLEventListener implements GLEventListener {
     GL3 gl = drawable.getGL().getGL3();
     render(gl);
   }
-
-  /* Clean up memory, if necessary */
-  public void dispose(GLAutoDrawable drawable) {
-    GL3 gl = drawable.getGL().getGL3();
-    light.dispose(gl);
-    room.dispose(gl);
-    table.dispose(gl);
-    lamp.dispose(gl);
-  }
-  
   
   // ***************************************************
   /* INTERACTION
@@ -91,13 +81,6 @@ public class Hatch_GLEventListener implements GLEventListener {
     startTime = getSeconds() - savedTime;
   }
 
-  private void moveLamp(int pose, float lowerAngleY, float lowerAngleZ, float upperAngle, float headAngle){
-    double elapsedTime = getSeconds()-startTime;
-
-    lamp.moveLamp(pose, lowerAngleY,lowerAngleZ,upperAngle,headAngle,elapsedTime);
-
-    }
-
   private int lightState = 1;
 
   public void setLight(int index, int i){
@@ -126,8 +109,8 @@ public class Hatch_GLEventListener implements GLEventListener {
     int[] textureId2 = TextureLibrary.loadTexture(gl, "textures/egg_specular.jpeg");
     int[] textureId3 = TextureLibrary.loadTexture(gl, "textures/container2.jpg");
     int[] textureId4 = TextureLibrary.loadTexture(gl, "textures/container2_specular.jpg");
-//    textureSky1 = TextureLibrary.loadTexture(gl, "textures/cloud2.jpg");
-//    textureSky2 = TextureLibrary.loadTexture(gl, "textures/cloud2_specular.jpg");
+    int[] textureSky1 = TextureLibrary.loadTexture(gl, "textures/cloud.jpg");
+    int[] textureSky2 = TextureLibrary.loadTexture(gl, "textures/cloud2_specular.jpg");
     int[] textureId7 = TextureLibrary.loadTexture(gl, "textures/woodenFloor.jpg");
     int[] textureId8 = TextureLibrary.loadTexture(gl, "textures/snake_body.jpg");
     int[] textureId9 = TextureLibrary.loadTexture(gl, "textures/base.jpg");
@@ -148,7 +131,7 @@ public class Hatch_GLEventListener implements GLEventListener {
     light_general02.setCamera(camera);
 
     // Initialise the room, table, egg and lamp
-    room = new Room(gl, camera, light, textureId7, textureId0);
+    room = new Room(gl, camera, light, textureId7, textureId0,textureSky1);
     table = new Table(gl, camera, light, textureId3, textureId4, textureId9, textureId10);
     egg = new Egg(gl, camera, light, textureId1, textureId2);
     lamp = new Lamp(gl, camera, light, textureId10, textureId8, textureId12,
@@ -166,6 +149,7 @@ public class Hatch_GLEventListener implements GLEventListener {
     light_general02.setPosition(-8, 11 ,8);
     light_general02.render(gl);
     room.render(gl);
+    moveCloud(gl);
     table.render(gl);
     egg.render(gl);
     updateEgg();
@@ -176,11 +160,29 @@ public class Hatch_GLEventListener implements GLEventListener {
     lamp.render(gl);
   }
 
+  /* Clean up memory, if necessary */
+  public void dispose(GLAutoDrawable drawable) {
+    GL3 gl = drawable.getGL().getGL3();
+    light.dispose(gl);
+    room.dispose(gl);
+    table.dispose(gl);
+    lamp.dispose(gl);
+  }
+
   private void updateEgg() {
     double elapsedTime = getSeconds()-startTime;
     egg.updateEgg(elapsedTime);
   }
 
+  private void moveLamp(int pose, float lowerAngleY, float lowerAngleZ, float upperAngle, float headAngle){
+    double elapsedTime = getSeconds()-startTime;
+    lamp.moveLamp(pose, lowerAngleY,lowerAngleZ,upperAngle,headAngle,elapsedTime);
+  }
+
+  private void moveCloud(GL3 gl) {
+    double elapsedTime = getSeconds()-startTime;
+    room.moveCloud(gl,elapsedTime);
+  }
   
   // The light's postion is continually being changed, so needs to be calculated for each frame.
   private Vec3 getLightPosition() {
