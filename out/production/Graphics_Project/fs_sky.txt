@@ -30,7 +30,5 @@ struct Material {
 uniform Material material;
 
 void main() {
-  fragColor = vec4(mix(texture(first_texture, movingTexCoord),
-                       texture(second_texture, aTexCoord),
-                   0.8f).rgb, 1.0f);
+  fragColor = vec4(texture(first_texture, movingTexCoord).rgb, 1.0f);
 }

@@ -110,7 +110,7 @@ public class Hatch_GLEventListener implements GLEventListener {
     int[] textureId3 = TextureLibrary.loadTexture(gl, "textures/container2.jpg");
     int[] textureId4 = TextureLibrary.loadTexture(gl, "textures/container2_specular.jpg");
     int[] textureSky1 = TextureLibrary.loadTexture(gl, "textures/cloud.jpg");
-    int[] textureSky2 = TextureLibrary.loadTexture(gl, "textures/cloud2_specular.jpg");
+    int[] textureSky2 = TextureLibrary.loadTexture(gl, "textures/cloud_specular.jpg");
     int[] textureId7 = TextureLibrary.loadTexture(gl, "textures/woodenFloor.jpg");
     int[] textureId8 = TextureLibrary.loadTexture(gl, "textures/snake_body.jpg");
     int[] textureId9 = TextureLibrary.loadTexture(gl, "textures/base.jpg");
