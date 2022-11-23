@@ -72,9 +72,14 @@ public class Hatch_GLEventListener implements GLEventListener {
   private int[] upperAngleR = {100, -10, -30};
   private int[] headAngleR = {-75, -50, 20};
 
+  private int[] lightAngleZL = {35, 30, -30};
+  private int[] lightAngleYL = {0, 60, -90};
+
   public void lampState(int n, int lampNumber) {
-    animation = true;
+    lamp.animation = true;
+    light.animation = true;
     lamp.setState(n);
+    light.setState(n);
     state = n;
     lamp.setLampNum(lampNumber);
     lampNum = lampNumber;
@@ -83,13 +88,13 @@ public class Hatch_GLEventListener implements GLEventListener {
 
   public void setLight(int lightNum, int i){
     if (i == 0){
-      light.material.setAmbient(0f, 0f, 0f);
-      light.material.setDiffuse(0f, 0f, 0f);
-      light.material.setSpecular(0f, 0f, 0f);
+      light_general01.material.setAmbient(0f, 0f, 0f);
+      light_general01.material.setDiffuse(0f, 0f, 0f);
+      light_general01.material.setSpecular(0f, 0f, 0f);
     }else{
-      light.material.setAmbient(1f, 1f, 1f);
-      light.material.setDiffuse(1f, 1f, 1f);
-      light.material.setSpecular(1f, 1f, 1f);
+      light_general01.material.setAmbient(1f, 1f, 1f);
+      light_general01.material.setDiffuse(1f, 1f, 1f);
+      light_general01.material.setSpecular(1f, 1f, 1f);
     }
   }
   
@@ -102,7 +107,8 @@ public class Hatch_GLEventListener implements GLEventListener {
   private Camera camera;
   private Mat4 perspective;
   private Room room;
-  private Light light, light_general01, light_general02;
+  private Light light_general01, light_general02;
+  private SpotLight light;
   private Egg egg;
   private Table table;
   private Lamp lamp;
@@ -126,7 +132,7 @@ public class Hatch_GLEventListener implements GLEventListener {
     int[] textureId14 = TextureLibrary.loadTexture(gl, "textures/snake_headL.jpeg");
     int[] textureId15 = TextureLibrary.loadTexture(gl, "textures/snake_headR.jpeg");
         
-    light = new Light(gl,2);
+    light = new SpotLight(gl,2);
     light.setCamera(camera);
 
     light_general01 = new Light(gl,1);
@@ -136,10 +142,10 @@ public class Hatch_GLEventListener implements GLEventListener {
     light_general02.setCamera(camera);
 
     // Initialise the room, table, egg and lamp
-    room = new Room(gl, camera, light, textureId7, textureId0,textureSky1);
-    table = new Table(gl, camera, light, textureId3, textureId4, textureId9, textureId10);
-    egg = new Egg(gl, camera, light, textureId1, textureId2);
-    lamp = new Lamp(gl, camera, light, textureId10, textureId8, textureId12,
+    room = new Room(gl, camera, light_general01, textureId7, textureId0,textureSky1);
+    table = new Table(gl, camera, light_general01, textureId3, textureId4, textureId9, textureId10);
+    egg = new Egg(gl, camera, light_general01, textureId1, textureId2);
+    lamp = new Lamp(gl, camera, light_general01, textureId10, textureId8, textureId12,
                     textureId11, textureId13, textureId14, textureId15, textureId9);
 
   }
@@ -147,8 +153,8 @@ public class Hatch_GLEventListener implements GLEventListener {
 
   private void render(GL3 gl) {
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-    light.setPosition(getLightPosition());  // changing light position each frame
-    light.render(gl);
+//    light.setPosition(getLightPosition());  // changing light position each frame
+
     light_general01.setPosition(8, 11 ,-8);
     light_general01.render(gl);
     light_general02.setPosition(-8, 11 ,8);
@@ -158,10 +164,17 @@ public class Hatch_GLEventListener implements GLEventListener {
     table.render(gl);
     egg.render(gl);
     updateEgg();
-    if(animation && (lampNum != lamp.getCurrentLampNum() || lamp.getCurrentState() != state)) {
-      if (lampNum == 0) moveLamp(0, lowerAngleYL[state] - lowerAngleYL[lamp.getCurrentState()], lowerAngleZL[state] - lowerAngleZL[lamp.getCurrentState()], upperAngleL[state] - upperAngleL[lamp.getCurrentState()], headAngleL[state] - headAngleL[lamp.getCurrentState()]);
-      if (lampNum == 1) moveLamp(1, lowerAngleYR[state] - lowerAngleYR[lamp.getCurrentState()], lowerAngleZR[state] - lowerAngleZR[lamp.getCurrentState()], upperAngleR[state] - upperAngleR[lamp.getCurrentState()], headAngleR[state] - headAngleR[lamp.getCurrentState()]);
+    if(lamp.animation && (lampNum != lamp.getCurrentLampNum() || lamp.getCurrentState() != state)) {
+      if (lampNum == 0) {
+        moveLamp(0, lowerAngleYL[state] - lowerAngleYL[lamp.getCurrentState()], lowerAngleZL[state] - lowerAngleZL[lamp.getCurrentState()], upperAngleL[state] - upperAngleL[lamp.getCurrentState()], headAngleL[state] - headAngleL[lamp.getCurrentState()]);
+        moveSpot(0,lightAngleZL[state] - lightAngleZL[light.getCurrentState()], lightAngleYL[state] - lightAngleYL[light.getCurrentState()]);
+      }
+      if (lampNum == 1) {
+        moveLamp(1, lowerAngleYR[state] - lowerAngleYR[lamp.getCurrentState()], lowerAngleZR[state] - lowerAngleZR[lamp.getCurrentState()], upperAngleR[state] - upperAngleR[lamp.getCurrentState()], headAngleR[state] - headAngleR[lamp.getCurrentState()]);
+      }
     }
+    moveSpot(0, 30, 60);
+    light.render(gl);
     lamp.render(gl);
   }
 
@@ -181,7 +194,12 @@ public class Hatch_GLEventListener implements GLEventListener {
 
   private void moveLamp(int pose, float lowerAngleY, float lowerAngleZ, float upperAngle, float headAngle){
     double elapsedTime = getSeconds()-startTime;
-    lamp.moveLamp(pose, lowerAngleY,lowerAngleZ,upperAngle,headAngle,elapsedTime);
+    lamp.moveLamp(pose,lowerAngleY,lowerAngleZ,upperAngle,headAngle,elapsedTime);
+  }
+
+  private void moveSpot(int pose, float angleZ, float angleY){
+    double elapsedTime = getSeconds()-startTime;
+    light.moveSpot(pose, angleZ, angleY, elapsedTime);
   }
 
   private void moveCloud(GL3 gl) {
@@ -192,9 +210,9 @@ public class Hatch_GLEventListener implements GLEventListener {
   // The light's postion is continually being changed, so needs to be calculated for each frame.
   private Vec3 getLightPosition() {
     double elapsedTime = getSeconds()-startTime;
-    float x = 5.0f*(float)(Math.sin(Math.toRadians(elapsedTime*50)));
+    float x = -5.0f;
     float y = 2.7f;
-    float z = 5.0f*(float)(Math.cos(Math.toRadians(elapsedTime*50)));
+    float z = 0f;
     return new Vec3(x,y,z);
   }
 

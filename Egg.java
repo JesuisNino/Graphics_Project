@@ -14,10 +14,11 @@ public class Egg{
 
     private SGNode eggRoot;
     private float xPosition = 0;
-    private TransformNode jumpY, translateX, rotateAllY, rotateAllZ;
+    private TransformNode jumpY, translateX, rotateAllY, rotateAllZ, makeEgg;
     private float rotateAllAngleStart = 5, rotateAllAngleY = rotateAllAngleStart ,rotateAllAngleZ = rotateAllAngleStart;
     private float jumpYStart = 0, jumpYHeight = jumpYStart;
     private float jumpHeght = 0.3f;
+    private int i=0;
 
 
     public Egg(GL3 gl, Camera camera, Light light, int[] textureId1, int[] textureId2) {
@@ -37,8 +38,8 @@ public class Egg{
         NameNode egg = new NameNode("egg");
         Mat4 m = Mat4Transform.scale(2,2.5f,2);
         m = Mat4.multiply(m, Mat4Transform.translate(0, 1.9f,0));
-        m = Mat4.multiply(m, Mat4Transform.rotateAroundY(180));
-        TransformNode makeEgg = new TransformNode("scale(2,2.5f,2);translate(0, 1.9f,0)", m);
+        m = Mat4.multiply(m, Mat4Transform.rotateAroundY(i));
+        makeEgg = new TransformNode("scale(2,2.5f,2);translate(0, 1.9f,0)", m);
         ModelNode eggNode = new ModelNode("Sphere(egg)", sphere);
 
         eggRoot.addChild(translateX);
@@ -55,6 +56,11 @@ public class Egg{
     public void updateEgg(double elapsedTime) {
         rotateAllAngleY = rotateAllAngleStart * (float) Math.sin(elapsedTime * 6);
         rotateAllAngleZ = rotateAllAngleStart * (float) Math.cos(elapsedTime * 4);
+        i+=1;
+        Mat4 m = Mat4Transform.scale(2,2.5f,2);
+        m = Mat4.multiply(m, Mat4Transform.translate(0, 1.9f,0));
+        m = Mat4.multiply(m, Mat4Transform.rotateAroundY(i));
+        makeEgg.setTransform(m);
         rotateAllY.setTransform(Mat4Transform.rotateAroundX(rotateAllAngleY));
         rotateAllZ.setTransform(Mat4Transform.rotateAroundZ(rotateAllAngleZ));
         jumpYHeight = jumpYStart + jumpHeght + (float) Math.sin(elapsedTime * 12) * jumpHeght;

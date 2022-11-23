@@ -324,8 +324,7 @@ public class Lamp{
         //System.exit(0);
     }
 
-    private boolean animation = false;
-    private double savedTime = 0;
+    public boolean animation = false;
 
     private int currentState = 0;
     private int state,lampNum, currentLampNum;
@@ -355,8 +354,8 @@ public class Lamp{
         return currentState;
     }
 
-    public float rotateAngleUpper, rotateAngleHead,rotateAngleLowerZ,rotateAngleLowerY;
     public void moveLamp(int lamp, float lowerAngleY, float lowerAngleZ, float upperAngle, float headAngle, double elapsedTime){
+        float rotateAngleUpper, rotateAngleHead,rotateAngleLowerZ,rotateAngleLowerY;
         if (lamp==0 && (float)Math.sin(elapsedTime) < 0.99) {
             currentLampNum = 0;
             rotateAngleUpper = upperAngleL[currentState] + upperAngle * (float) Math.sin(elapsedTime);

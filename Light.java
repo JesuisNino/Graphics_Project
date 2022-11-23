@@ -13,9 +13,9 @@ public class Light {
     
   public Light(GL3 gl, int i) {
     material = new Material();
-    material.setAmbient(1f, 1f, 1f);
-    material.setDiffuse(1f, 1f, 1f);
-    material.setSpecular(1f, 1f, 1f);
+    material.setAmbient(0.8f, 0.8f, 0.8f);
+    material.setDiffuse(0.8f, 0.8f, 0.8f);
+    material.setSpecular(0.8f, 0.8f, 0.8f);
     position = new Vec3(3f,2f,1f);
     model = new Mat4(1);
     shader = new Shader(gl, "vs_light_01.txt", "fs_light_01.txt");
