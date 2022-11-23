@@ -67,6 +67,12 @@ public class Hatch extends JFrame implements ActionListener {
       b = new JButton("Right02");
       b.addActionListener(this);
       p.add(b);
+      b = new JButton("Turn on 01");
+      b.addActionListener(this);
+      p.add(b);
+      b = new JButton("Turn off 01");
+      b.addActionListener(this);
+      p.add(b);
     this.add(p, BorderLayout.WEST);
     
     addWindowListener(new WindowAdapter() {
@@ -118,7 +124,7 @@ public class Hatch extends JFrame implements ActionListener {
       glEventListener.setLight(1,1);
     }
     else if (e.getActionCommand().equalsIgnoreCase("Turn off 01")) {
-      glEventListener.lampState(1,0);
+      glEventListener.setLight(1,0);
     }
     else if(e.getActionCommand().equalsIgnoreCase("quit"))
       System.exit(0);

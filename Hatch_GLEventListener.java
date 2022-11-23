@@ -81,10 +81,16 @@ public class Hatch_GLEventListener implements GLEventListener {
     startTime = getSeconds() - savedTime;
   }
 
-  private int lightState = 1;
-
-  public void setLight(int index, int i){
-    lightState = i;
+  public void setLight(int lightNum, int i){
+    if (i == 0){
+      light.material.setAmbient(0f, 0f, 0f);
+      light.material.setDiffuse(0f, 0f, 0f);
+      light.material.setSpecular(0f, 0f, 0f);
+    }else{
+      light.material.setAmbient(1f, 1f, 1f);
+      light.material.setDiffuse(1f, 1f, 1f);
+      light.material.setSpecular(1f, 1f, 1f);
+    }
   }
   
   // ***************************************************
@@ -110,7 +116,6 @@ public class Hatch_GLEventListener implements GLEventListener {
     int[] textureId3 = TextureLibrary.loadTexture(gl, "textures/container2.jpg");
     int[] textureId4 = TextureLibrary.loadTexture(gl, "textures/container2_specular.jpg");
     int[] textureSky1 = TextureLibrary.loadTexture(gl, "textures/cloud.jpg");
-    int[] textureSky2 = TextureLibrary.loadTexture(gl, "textures/cloud_specular.jpg");
     int[] textureId7 = TextureLibrary.loadTexture(gl, "textures/woodenFloor.jpg");
     int[] textureId8 = TextureLibrary.loadTexture(gl, "textures/snake_body.jpg");
     int[] textureId9 = TextureLibrary.loadTexture(gl, "textures/base.jpg");
@@ -190,8 +195,7 @@ public class Hatch_GLEventListener implements GLEventListener {
     float x = 5.0f*(float)(Math.sin(Math.toRadians(elapsedTime*50)));
     float y = 2.7f;
     float z = 5.0f*(float)(Math.cos(Math.toRadians(elapsedTime*50)));
-    return new Vec3(x,y,z);   
-    //return new Vec3(5f,3.4f,5f);
+    return new Vec3(x,y,z);
   }
 
   

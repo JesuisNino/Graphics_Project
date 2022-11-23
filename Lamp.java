@@ -13,14 +13,22 @@ public class Lamp{
     private Model cube;
     private SGNode lampRootL, lampRootR;
 
-    private float xPosition = 0;
     private TransformNode lowerBranchRotateZL, lowerBranchRotateYL, upperBranchRotateL, headRotateL;
     private TransformNode lowerBranchRotateZR, lowerBranchRotateYR, upperBranchRotateR, headRotateR;
     private TransformNode lampMoveTranslate;
 
+    public Vec3 positionL, positionR;
+
+    public Vec3 getPositionL() {
+        return positionL;
+    }
+
+    public Vec3 getPositionR() {
+        return positionR;
+    }
 
     public Lamp(GL3 gl, Camera camera, Light light, int[] textureId1, int[] textureId2, int[] textureId3,
-                int[] textureId4,  int[] textureId5, int[] textureId6, int[] textureId7, int[] textureId8) {
+                int[] textureId4, int[] textureId5, int[] textureId6, int[] textureId7, int[] textureId8) {
         Mesh mesh = new Mesh(gl, Sphere.vertices.clone(), Sphere.indices.clone());
         Shader shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
         Material material = new Material(new Vec3(1.0f, 0.5f, 0.5f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 50.0f);
@@ -52,7 +60,7 @@ public class Lamp{
         float stickScale = 0.15f;
 
         lampRootL = new NameNode("root");
-        lampMoveTranslate = new TransformNode("lamp transform",Mat4Transform.translate(xPosition - 5,0,0));
+        lampMoveTranslate = new TransformNode("lamp transform",Mat4Transform.translate(-5,0,0));
 
         TransformNode lampTranslateL = new TransformNode("lamp transform",Mat4Transform.translate(0,0,0));
 
@@ -88,6 +96,9 @@ public class Lamp{
         TransformNode makeUpperBranchL = new TransformNode("upper branch transform", m);
         ModelNode upperBranchShapeL = new ModelNode("Sphere(1)", snakeBodyL);
 
+//        positionL.x = 0;
+//        positionL.y = branchLength;
+//        positionL.z = 0;
         TransformNode translateToTop03L = new TransformNode("translate",Mat4Transform.translate(0,branchLength,0));
         headRotateL = new TransformNode("rotate lamp head",Mat4Transform.rotateAroundZ(headAngleL[0]));
         NameNode lampHeadL = new NameNode("lamp head");
@@ -194,7 +205,7 @@ public class Lamp{
         headScale = 0.7f;
 
         lampRootR = new NameNode("root");
-        lampMoveTranslate = new TransformNode("lamp transform",Mat4Transform.translate(xPosition + 5,0,0));
+        lampMoveTranslate = new TransformNode("lamp transform",Mat4Transform.translate(5,0,0));
 
         TransformNode lampTranslateR = new TransformNode("lamp transform",Mat4Transform.translate(0,0,0));
 
@@ -344,9 +355,8 @@ public class Lamp{
         return currentState;
     }
 
+    public float rotateAngleUpper, rotateAngleHead,rotateAngleLowerZ,rotateAngleLowerY;
     public void moveLamp(int lamp, float lowerAngleY, float lowerAngleZ, float upperAngle, float headAngle, double elapsedTime){
-        float rotateAngleUpper, rotateAngleHead,rotateAngleLowerZ,rotateAngleLowerY;
-
         if (lamp==0 && (float)Math.sin(elapsedTime) < 0.99) {
             currentLampNum = 0;
             rotateAngleUpper = upperAngleL[currentState] + upperAngle * (float) Math.sin(elapsedTime);
