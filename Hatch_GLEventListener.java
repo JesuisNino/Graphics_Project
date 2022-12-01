@@ -61,14 +61,14 @@ public class Hatch_GLEventListener implements GLEventListener {
   private int currentState = 0;
   private int state,lampNum, currentLampNum;
   private int[] lowerAngleZL = {45, -45, -30};
-  private int[] lowerAngleYL = {0, 60, -90};
+  private int[] lowerAngleYL = {0, 60, -180};
   private int[] upperAngleL = {-100, -20, 75};
   private int[] headAngleL = {75, 70, -40};
 
   private int[] lowerAngleZR = {-45, 60, 10};
-  private int[] lowerAngleYR = {0, -70, 90};
-  private int[] upperAngleR = {100, -10, -30};
-  private int[] headAngleR = {-75, -50, 20};
+  private int[] lowerAngleYR = {0, -70, -180};
+  private int[] upperAngleR = {100, -10, -60};
+  private int[] headAngleR = {-75, -50, 50};
 
 
   public void lampState(int n, int lampNumber) {
