@@ -79,7 +79,7 @@ public class Light {
   
   public void render(GL3 gl) {
     Mat4 model = new Mat4(1);
-    model = Mat4.multiply(Mat4Transform.scale(0.3f,0.3f,0.3f), model);
+    model = Mat4.multiply(Mat4Transform.scale(0,0,0), model);
     model = Mat4.multiply(Mat4Transform.translate(position), model);
     
     Mat4 mvpMatrix = Mat4.multiply(camera.getPerspectiveMatrix(), Mat4.multiply(camera.getViewMatrix(), model));
@@ -115,7 +115,7 @@ public class Light {
      };
     
     private int[] indices =  new int[] {
-      0,1,3, // x -ve 
+      0,1,3, // x -ve
       3,2,0, // x -ve
       4,6,7, // x +ve
       7,5,4, // x +ve

@@ -121,6 +121,7 @@ public class Hatch_GLEventListener implements GLEventListener {
     int[] textureId13 = TextureLibrary.loadTexture(gl, "textures/snake_hair.jpeg");
     int[] textureId14 = TextureLibrary.loadTexture(gl, "textures/snake_headL.jpeg");
     int[] textureId15 = TextureLibrary.loadTexture(gl, "textures/snake_headR.jpeg");
+    int[] textureId16 = TextureLibrary.loadTexture(gl, "textures/bulb.jpeg");
         
     spotLight = new SpotLight(gl,2);
     spotLight.setCamera(camera);
@@ -144,7 +145,7 @@ public class Hatch_GLEventListener implements GLEventListener {
     table = new Table(gl, camera, lightList,shader, textureId3, textureId4, textureId9, textureId10);
     egg = new Egg(gl, camera, lightList,shader, textureId1, textureId2);
     lamp = new Lamp(gl, camera, lightList,shader, textureId10, textureId8, textureId12,
-                    textureId11, textureId13, textureId14, textureId15, textureId9);
+                    textureId11, textureId13, textureId14, textureId15, textureId9, textureId16);
 
   }
 

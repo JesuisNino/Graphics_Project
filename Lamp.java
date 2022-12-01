@@ -23,7 +23,7 @@ public class Lamp {
     List<Light> lightList;
 
     public Lamp(GL3 gl, Camera camera,List<Light> lightList, Shader shader, int[] textureId1, int[] textureId2, int[] textureId3,
-                int[] textureId4, int[] textureId5, int[] textureId6, int[] textureId7, int[] textureId8) {
+                int[] textureId4, int[] textureId5, int[] textureId6, int[] textureId7, int[] textureId8, int[] textureId9) {
         this.lightList = lightList;
         this.shader = shader;
         Mesh mesh = new Mesh(gl, Sphere.vertices.clone(), Sphere.indices.clone());
@@ -42,6 +42,7 @@ public class Lamp {
         Model snakeHeadL = new Model(gl, camera, lightList, shader, material, modelMatrix, mesh, textureId6, textureId1);
         Model snakeHeadR = new Model(gl, camera, lightList, shader, material, modelMatrix, mesh, textureId7, textureId1);
         Model baseCube = new Model(gl, camera, lightList, shader, material, modelMatrix, mesh, textureId8, textureId1);
+        Model bulb = new Model(gl, camera, lightList, shader, material, modelMatrix, mesh, textureId9, textureId1);
 
 
         float jointScale = 0.5f;
@@ -138,9 +139,13 @@ public class Lamp {
         TransformNode eyeTransform2L = new TransformNode("eye transform", m);
         ModelNode eyeShape2L = new ModelNode("eye shape", eye);
 
-        TransformNode translateToTop08L = new TransformNode("translate",Mat4Transform.translate(0.7f,0,0));
+        TransformNode translateToTop08L = new TransformNode("translate",Mat4Transform.translate(0.6f,0,0));
         NameNode bulbL = new NameNode("bulbL");
+        m = new Mat4(1);
+        m = Mat4.multiply(m, Mat4Transform.scale(0.3f, 0.2f, 0.2f));
+        m = Mat4.multiply(m, Mat4Transform.translate(0,0,0));
         bulbTransformL = new TransformNode("eye transform", m);
+        ModelNode bulbShape = new ModelNode("eye shape", bulb);
 
         lampRootL.addChild(lampMoveTranslate);
         lampMoveTranslate.addChild(lampTranslateL);
@@ -188,6 +193,7 @@ public class Lamp {
         lampHeadL.addChild(translateToTop08L);
         translateToTop08L.addChild(bulbL);
         bulbL.addChild(bulbTransformL);
+        bulbTransformL.addChild(bulbShape);
 
         lampRootL.update();  // IMPORTANT - don't forget this
 
@@ -279,9 +285,13 @@ public class Lamp {
         TransformNode hairTransformR = new TransformNode("stick transform", m);
         ModelNode hairShapeR = new ModelNode("stick", hair);
 
-        TransformNode translateToTop09R = new TransformNode("translate",Mat4Transform.translate(-1.2f,0,0));
+        TransformNode translateToTop09R = new TransformNode("translate",Mat4Transform.translate(-1.1f,0,0));
         NameNode bulbR = new NameNode("bulbL");
+        m = new Mat4(1);
+        m = Mat4.multiply(m, Mat4Transform.scale(0.3f, 0.4f, 0.4f));
+        m = Mat4.multiply(m, Mat4Transform.translate(0,0,0));
         bulbTransformR = new TransformNode("eye transform", m);
+        bulbShape = new ModelNode("eye shape", bulb);
 
         lampRootR.addChild(lampMoveTranslate);
         lampMoveTranslate.addChild(lampTranslateR);
@@ -323,6 +333,7 @@ public class Lamp {
         lampHeadR.addChild(translateToTop09R);
         translateToTop09R.addChild(bulbR);
         bulbR.addChild(bulbTransformR);
+        bulbTransformR.addChild(bulbShape);
 
         lampRootR.update();  // IMPORTANT - don't forget this
         float[] f = bulbTransformL.worldTransform.toFloatArrayForGLSL();
@@ -387,7 +398,6 @@ public class Lamp {
                 direction.z = direction.z - 0.4f;
             }
             this.lightList.get(2).setDirection(direction);
-//            this.lightList.get(2).setDirection(headRotateL.worldTransform.getDir());
         }else if (lamp==1 && (float)Math.sin(elapsedTime) < 0.99) {
             currentLampNum = 1;
             rotateAngleUpper = upperAngleR[currentState] + upperAngle * (float) Math.sin(elapsedTime);

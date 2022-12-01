@@ -20,7 +20,7 @@ public class SpotLight extends Light {
         material.setSpecular(1f, 1f, 1f);
         position = new Vec3(-4f,3f,0f);
         model = new Mat4(1);
-        model = Mat4.multiply(Mat4Transform.scale(0.3f,0.3f,0.3f), model);
+        model = Mat4.multiply(Mat4Transform.scale(0,0,0), model);
         model = Mat4.multiply(Mat4Transform.translate(position), model);
         shader = new Shader(gl, "vs_light_01.txt", "fs_light_01.txt");
 
@@ -71,7 +71,7 @@ public class SpotLight extends Light {
     public void render(GL3 gl) {
 
         Mat4 model = new Mat4(1);
-        model = Mat4.multiply(Mat4Transform.scale(0.3f,0.3f,0.3f), model);
+        model = Mat4.multiply(Mat4Transform.scale(0,0,0), model);
 
 
         model = Mat4.multiply(Mat4Transform.translate(position), model);
