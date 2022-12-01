@@ -70,11 +70,13 @@ public class Hatch_GLEventListener implements GLEventListener {
   private int[] upperAngleR = {100, -10, -60};
   private int[] headAngleR = {-75, -50, 50};
 
+  private boolean sameLamp = true;
 
   public void lampState(int n, int lampNumber) {
     lamp.animation = true;
     lamp.setState(n);
     state = n;
+    if (lamp.getCurrentLampNum() != lampNumber) sameLamp=false;
     lamp.setLampNum(lampNumber);
     lampNum = lampNumber;
     startTime = getSeconds() - savedTime;

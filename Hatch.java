@@ -132,12 +132,6 @@ public class Hatch extends JFrame implements ActionListener {
     else if (e.getActionCommand().equalsIgnoreCase("Right02")) {
       glEventListener.lampState(2,1);
     }
-//    else if (e.getActionCommand().equalsIgnoreCase("Left Light")) {
-//      glEventListener.lampState(2,1);
-//    }
-//    else if (e.getActionCommand().equalsIgnoreCase("Right Light")) {
-//      glEventListener.lampState(2,1);
-//    }
     else if (e.getActionCommand().equalsIgnoreCase("Turn on 01")) {
       glEventListener.setLight(0,true);
     }
