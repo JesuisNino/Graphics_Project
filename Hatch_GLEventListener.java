@@ -59,7 +59,7 @@ public class Hatch_GLEventListener implements GLEventListener {
   private double savedTime = 0;
 
   private int currentState = 0;
-  private int state,lampNum, currentLampNum;
+  private int state,lampNum;
   private int[] lowerAngleZL = {45, -45, -30};
   private int[] lowerAngleYL = {0, 60, -180};
   private int[] upperAngleL = {-100, -20, 75};
@@ -76,7 +76,6 @@ public class Hatch_GLEventListener implements GLEventListener {
     lamp.animation = true;
     lamp.setState(n);
     state = n;
-    if (lamp.getCurrentLampNum() != lampNumber) sameLamp=false;
     lamp.setLampNum(lampNumber);
     lampNum = lampNumber;
     startTime = getSeconds() - savedTime;
@@ -166,12 +165,12 @@ public class Hatch_GLEventListener implements GLEventListener {
     table.render(gl);
     egg.render(gl);
     updateEgg();
-    if(lamp.animation && (lampNum != lamp.getCurrentLampNum() || lamp.getCurrentState() != state)) {
-      if (lampNum == 0) {
-        moveLamp(0, lowerAngleYL[state] - lowerAngleYL[lamp.getCurrentState()], lowerAngleZL[state] - lowerAngleZL[lamp.getCurrentState()], upperAngleL[state] - upperAngleL[lamp.getCurrentState()], headAngleL[state] - headAngleL[lamp.getCurrentState()]);
+    if(lamp.animation) {
+      if ((lampNum != lamp.getCurrentLampNum() || lamp.getCurrentStateL() != state) && lampNum == 0) {
+        moveLamp(0, lowerAngleYL[state] - lowerAngleYL[lamp.getCurrentStateL()], lowerAngleZL[state] - lowerAngleZL[lamp.getCurrentStateL()], upperAngleL[state] - upperAngleL[lamp.getCurrentStateL()], headAngleL[state] - headAngleL[lamp.getCurrentStateL()]);
       }
-      if (lampNum == 1) {
-        moveLamp(1, lowerAngleYR[state] - lowerAngleYR[lamp.getCurrentState()], lowerAngleZR[state] - lowerAngleZR[lamp.getCurrentState()], upperAngleR[state] - upperAngleR[lamp.getCurrentState()], headAngleR[state] - headAngleR[lamp.getCurrentState()]);
+      if ((lampNum != lamp.getCurrentLampNum() || lamp.getCurrentStateR() != state) && lampNum == 1) {
+        moveLamp(1, lowerAngleYR[state] - lowerAngleYR[lamp.getCurrentStateR()], lowerAngleZR[state] - lowerAngleZR[lamp.getCurrentStateR()], upperAngleR[state] - upperAngleR[lamp.getCurrentStateR()], headAngleR[state] - headAngleR[lamp.getCurrentStateR()]);
       }
     }
 

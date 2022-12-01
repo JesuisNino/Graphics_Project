@@ -353,7 +353,7 @@ public class Lamp {
     public boolean animation = false;
 
     private float currentLightXL, currentLightZL;
-    private int currentState = 0;
+    private int currentStateL = 0, currentStateR = 0;
     private int state,lampNum, currentLampNum;
     private int[] lowerAngleZL = {45, -45, -30};
     private int[] lowerAngleYL = {0, 60, -180};
@@ -377,18 +377,22 @@ public class Lamp {
         return currentLampNum;
     }
 
-    public int getCurrentState(){
-        return currentState;
+    public int getCurrentStateL(){
+        return currentStateL;
+    }
+
+    public int getCurrentStateR(){
+        return currentStateR;
     }
 
     public void moveLamp(int lamp, float lowerAngleY, float lowerAngleZ, float upperAngle, float headAngle, double elapsedTime){
         float rotateAngleUpper, rotateAngleHead,rotateAngleLowerZ,rotateAngleLowerY;
         if (lamp==0 && (float)Math.sin(elapsedTime) < 0.99) {
             currentLampNum = 0;
-            rotateAngleUpper = upperAngleL[currentState] + upperAngle * (float) Math.sin(elapsedTime);
-            rotateAngleHead = headAngleL[currentState] + headAngle * (float) Math.sin(elapsedTime);
-            rotateAngleLowerZ = lowerAngleZL[currentState] + lowerAngleZ * (float) Math.sin(elapsedTime);
-            rotateAngleLowerY = lowerAngleYL[currentState] + lowerAngleY * (float) Math.sin(elapsedTime);
+            rotateAngleUpper = upperAngleL[currentStateL] + upperAngle * (float) Math.sin(elapsedTime);
+            rotateAngleHead = headAngleL[currentStateL] + headAngle * (float) Math.sin(elapsedTime);
+            rotateAngleLowerZ = lowerAngleZL[currentStateL] + lowerAngleZ * (float) Math.sin(elapsedTime);
+            rotateAngleLowerY = lowerAngleYL[currentStateL] + lowerAngleY * (float) Math.sin(elapsedTime);
             lowerBranchRotateZL.setTransform(Mat4Transform.rotateAroundZ(rotateAngleLowerZ));
             lowerBranchRotateYL.setTransform(Mat4Transform.rotateAroundY(rotateAngleLowerY));
             upperBranchRotateL.setTransform(Mat4Transform.rotateAroundZ(rotateAngleUpper));
@@ -410,15 +414,14 @@ public class Lamp {
             this.lightList.get(2).setDirection(direction);
         }else if (lamp==1 && (float)Math.sin(elapsedTime) < 0.99) {
             currentLampNum = 1;
-            rotateAngleUpper = upperAngleR[currentState] + upperAngle * (float) Math.sin(elapsedTime);
-            rotateAngleHead = headAngleR[currentState] + headAngle * (float) Math.sin(elapsedTime);
-            rotateAngleLowerZ = lowerAngleZR[currentState] + lowerAngleZ * (float) Math.sin(elapsedTime);
-            rotateAngleLowerY = lowerAngleYR[currentState] + lowerAngleY * (float) Math.sin(elapsedTime);
+            rotateAngleUpper = upperAngleR[currentStateR] + upperAngle * (float) Math.sin(elapsedTime);
+            rotateAngleHead = headAngleR[currentStateR] + headAngle * (float) Math.sin(elapsedTime);
+            rotateAngleLowerZ = lowerAngleZR[currentStateR] + lowerAngleZ * (float) Math.sin(elapsedTime);
+            rotateAngleLowerY = lowerAngleYR[currentStateR] + lowerAngleY * (float) Math.sin(elapsedTime);
             lowerBranchRotateZR.setTransform(Mat4Transform.rotateAroundZ(rotateAngleLowerZ));
             lowerBranchRotateYR.setTransform(Mat4Transform.rotateAroundY(rotateAngleLowerY));
             upperBranchRotateR.setTransform(Mat4Transform.rotateAroundZ(rotateAngleUpper));
             headRotateR.setTransform(Mat4Transform.rotateAroundZ(rotateAngleHead));
-
             lampRootR.update();
             float[] f = lightTransformR.worldTransform.toFloatArrayForGLSL();
             this.lightList.get(3).setPosition(new Vec3(f[12], f[13], f[14]));
@@ -432,7 +435,8 @@ public class Lamp {
             this.lightList.get(3).setDirection(direction);
 
         }else {
-            currentState = state;
+            if (currentLampNum == 0) currentStateL = state;
+            if (currentLampNum == 1) currentStateR = state;
             animation = false;
         }
 
