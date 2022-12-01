@@ -3,7 +3,7 @@ import java.nio.*;
 import com.jogamp.common.nio.*;
 import com.jogamp.opengl.*;
 
-public class SpotLight {
+public class SpotLight extends Light {
 
     public Material material;
     private Vec3 position;
@@ -15,6 +15,7 @@ public class SpotLight {
     private TransformNode lightMoveTranslate, rotateNodeZL, rotateNodeYL, lightL;
 
     public SpotLight(GL3 gl, int i) {
+        super(gl,i);
         lightRootL = new NameNode("root");
         lightMoveTranslate = new TransformNode("lamp transform",Mat4Transform.translate(-5,0,0));
 
@@ -57,7 +58,15 @@ public class SpotLight {
         position.y = y;
         position.z = z;
     }
+    public Vec3 getDirection() {
+        return direction;
+    }
 
+    public void setDirection(Vec3 direction) {
+        this.direction = direction;
+    }
+
+    private Vec3 direction;
     public Vec3 getPosition() {
         return position;
     }
@@ -111,7 +120,11 @@ public class SpotLight {
 
         lightRootL.update();
         lightRootL.draw(gl);
+        Mat4 model = new Mat4(1);
+        model = Mat4.multiply(Mat4Transform.scale(0.3f,0.3f,0.3f), model);
 
+
+        model = Mat4.multiply(Mat4Transform.translate(position), model);
         Mat4 mvpMatrix = Mat4.multiply(camera.getPerspectiveMatrix(), Mat4.multiply(camera.getViewMatrix(), model));
 
         shader.use(gl);

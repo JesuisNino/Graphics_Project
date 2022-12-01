@@ -1,6 +1,8 @@
 import gmaths.*;
 import com.jogamp.opengl.*;
 
+import java.util.List;
+
 /**
  * This class stores the Robot
  *
@@ -12,7 +14,7 @@ public class Room{
 
     private Model floor, window, leftWall, rightWall, frame;
 
-    public Room(GL3 gl, Camera camera, Light light, int[] textureId1, int[] textureId2, int[] textureId3) {
+    public Room(GL3 gl, Camera camera,  List<Light> light, int[] textureId1, int[] textureId2, int[] textureId3) {
         Mesh mesh = new Mesh(gl, TwoTriangles.vertices.clone(), TwoTriangles.indices.clone());
         Shader shader = new Shader(gl, "vs_tt_05.txt", "fs_tt_05.txt");
         Material material = new Material(new Vec3(0.5f, 0.5f, 0.5f), new Vec3(0.5f, 0.5f, 0.5f), new Vec3(0.3f, 0.3f, 0.3f), 50.0f);

@@ -1,7 +1,9 @@
 import gmaths.*;
 import com.jogamp.opengl.*;
 
-    /**
+import java.util.List;
+
+/**
      * This class stores the Robot
      *
      * @author    Dr Steve Maddock
@@ -21,13 +23,13 @@ public class Egg{
     private int i=0;
 
 
-    public Egg(GL3 gl, Camera camera, Light light, int[] textureId1, int[] textureId2) {
+    public Egg(GL3 gl, Camera camera,  List<Light> lightList, Shader shader, int[] textureId1, int[] textureId2) {
 
         Mesh mesh = new Mesh(gl, Sphere.vertices.clone(), Sphere.indices.clone());
-        Shader shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
+//        Shader shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
         Material material = new Material(new Vec3(1.0f, 0.5f, 0.31f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 32.0f);
         Mat4 modelMatrix = Mat4.multiply(Mat4Transform.scale(4,4,4), Mat4Transform.translate(0,0.5f,0));
-        sphere = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId1, textureId2);
+        sphere = new Model(gl, camera, lightList, shader, material, modelMatrix, mesh, textureId1, textureId2);
 
         eggRoot = new NameNode("egg");
         jumpY = new TransformNode("jump", Mat4Transform.translate(0,jumpYHeight,0));

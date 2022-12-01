@@ -114,7 +114,14 @@ public class Mat4 {   // row column formulation
 
     return b; 
   }
-  
+  public Vec3 getDir() {
+
+    float x = (float) Math.asin(values[0][1]);
+    float y = (float) Math.asin(values[1][1]);
+    float z = (float) Math.asin(values[2][1]);
+
+    return new Vec3(-x, -y+1.3f, z);
+  }
   public float[] toFloatArrayForGLSL() {  // col by row
     float[] f = new float[16];
     for (int j=0; j<4; ++j) {

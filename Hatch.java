@@ -73,6 +73,24 @@ public class Hatch extends JFrame implements ActionListener {
       b = new JButton("Turn off 01");
       b.addActionListener(this);
       p.add(b);
+    b = new JButton("Turn on 02");
+    b.addActionListener(this);
+    p.add(b);
+    b = new JButton("Turn off 02");
+    b.addActionListener(this);
+    p.add(b);
+    b = new JButton("Turn spotLight off 01");
+    b.addActionListener(this);
+    p.add(b);
+    b = new JButton("Turn spotLight on 01");
+    b.addActionListener(this);
+    p.add(b);
+    b = new JButton("Turn spotLight off 02");
+    b.addActionListener(this);
+    p.add(b);
+    b = new JButton("Turn spotLight on 02");
+    b.addActionListener(this);
+    p.add(b);
     this.add(p, BorderLayout.WEST);
     
     addWindowListener(new WindowAdapter() {
@@ -121,10 +139,22 @@ public class Hatch extends JFrame implements ActionListener {
 //      glEventListener.lampState(2,1);
 //    }
     else if (e.getActionCommand().equalsIgnoreCase("Turn on 01")) {
-      glEventListener.setLight(1,1);
+      glEventListener.setLight(0,true);
     }
     else if (e.getActionCommand().equalsIgnoreCase("Turn off 01")) {
-      glEventListener.setLight(1,0);
+      glEventListener.setLight(0,false);
+    }else if (e.getActionCommand().equalsIgnoreCase("Turn on 02")) {
+      glEventListener.setLight(1,true);
+    }else if (e.getActionCommand().equalsIgnoreCase("Turn off 02")) {
+      glEventListener.setLight(1,false);
+    }else if (e.getActionCommand().equalsIgnoreCase("Turn spotLight on 01")) {
+      glEventListener.setLight(2,true);
+    }else if (e.getActionCommand().equalsIgnoreCase("Turn spotLight off 01")) {
+      glEventListener.setLight(2,false);
+    }else if (e.getActionCommand().equalsIgnoreCase("Turn spotLight on 02")) {
+      glEventListener.setLight(3,true);
+    }else if (e.getActionCommand().equalsIgnoreCase("Turn spotLight off 02")) {
+      glEventListener.setLight(3,false);
     }
     else if(e.getActionCommand().equalsIgnoreCase("quit"))
       System.exit(0);

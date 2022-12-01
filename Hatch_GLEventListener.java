@@ -1,12 +1,10 @@
 import gmaths.*;
 
-import java.nio.*;
-import com.jogamp.common.nio.*;
 import com.jogamp.opengl.*;
-import com.jogamp.opengl.util.*;
-import com.jogamp.opengl.util.awt.*;
-import com.jogamp.opengl.util.glsl.*;
-import sun.tools.jconsole.Tab;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class Hatch_GLEventListener implements GLEventListener {
   
@@ -77,25 +75,30 @@ public class Hatch_GLEventListener implements GLEventListener {
 
   public void lampState(int n, int lampNumber) {
     lamp.animation = true;
-    light.animation = true;
+    spotLight.animation = true;
     lamp.setState(n);
-    light.setState(n);
+    spotLight.setState(n);
     state = n;
     lamp.setLampNum(lampNumber);
     lampNum = lampNumber;
     startTime = getSeconds() - savedTime;
+    for (Light light: lightList) {
+      light.setPose(n);
+
+    }
   }
 
-  public void setLight(int lightNum, int i){
-    if (i == 0){
-      light_general01.material.setAmbient(0f, 0f, 0f);
-      light_general01.material.setDiffuse(0f, 0f, 0f);
-      light_general01.material.setSpecular(0f, 0f, 0f);
-    }else{
-      light_general01.material.setAmbient(1f, 1f, 1f);
-      light_general01.material.setDiffuse(1f, 1f, 1f);
-      light_general01.material.setSpecular(1f, 1f, 1f);
-    }
+  public void setLight(int lightNum, boolean onoff){
+    lightList.get(lightNum).setEnabled(onoff);
+//    if (i == 0){
+////      light_general01.material.setAmbient(0f, 0f, 0f);
+////      light_general01.material.setDiffuse(0f, 0f, 0f);
+////      light_general01.material.setSpecular(0f, 0f, 0f);
+//    }else{
+////      light_general01.material.setAmbient(1f, 1f, 1f);
+////      light_general01.material.setDiffuse(1f, 1f, 1f);
+////      light_general01.material.setSpecular(1f, 1f, 1f);1f
+//    }
   }
   
   // ***************************************************
@@ -108,7 +111,8 @@ public class Hatch_GLEventListener implements GLEventListener {
   private Mat4 perspective;
   private Room room;
   private Light light_general01, light_general02;
-  private SpotLight light;
+  private SpotLight spotLight;
+  private SpotLight spotLight2;
   private Egg egg;
   private Table table;
   private Lamp lamp;
@@ -132,24 +136,33 @@ public class Hatch_GLEventListener implements GLEventListener {
     int[] textureId14 = TextureLibrary.loadTexture(gl, "textures/snake_headL.jpeg");
     int[] textureId15 = TextureLibrary.loadTexture(gl, "textures/snake_headR.jpeg");
         
-    light = new SpotLight(gl,2);
-    light.setCamera(camera);
+    spotLight = new SpotLight(gl,2);
+    spotLight.setCamera(camera);
+    spotLight2 = new SpotLight(gl,2);
+    spotLight2.setCamera(camera);
 
     light_general01 = new Light(gl,1);
     light_general01.setCamera(camera);
 
+
     light_general02 = new Light(gl,1);
     light_general02.setCamera(camera);
+    lightList.add(light_general01);
+    lightList.add(light_general02);
+    lightList.add(spotLight);
+    lightList.add(spotLight2);
 
+    Shader shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
     // Initialise the room, table, egg and lamp
-    room = new Room(gl, camera, light_general01, textureId7, textureId0,textureSky1);
-    table = new Table(gl, camera, light_general01, textureId3, textureId4, textureId9, textureId10);
-    egg = new Egg(gl, camera, light_general01, textureId1, textureId2);
-    lamp = new Lamp(gl, camera, light_general01, textureId10, textureId8, textureId12,
+    room = new Room(gl, camera, lightList, textureId7, textureId0,textureSky1);
+    table = new Table(gl, camera, lightList,shader, textureId3, textureId4, textureId9, textureId10);
+    egg = new Egg(gl, camera, lightList,shader, textureId1, textureId2);
+    lamp = new Lamp(gl, camera, lightList,shader, textureId10, textureId8, textureId12,
                     textureId11, textureId13, textureId14, textureId15, textureId9);
 
   }
 
+  private List<Light> lightList = new ArrayList<>();
 
   private void render(GL3 gl) {
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
@@ -167,21 +180,25 @@ public class Hatch_GLEventListener implements GLEventListener {
     if(lamp.animation && (lampNum != lamp.getCurrentLampNum() || lamp.getCurrentState() != state)) {
       if (lampNum == 0) {
         moveLamp(0, lowerAngleYL[state] - lowerAngleYL[lamp.getCurrentState()], lowerAngleZL[state] - lowerAngleZL[lamp.getCurrentState()], upperAngleL[state] - upperAngleL[lamp.getCurrentState()], headAngleL[state] - headAngleL[lamp.getCurrentState()]);
-        moveSpot(0,lightAngleZL[state] - lightAngleZL[light.getCurrentState()], lightAngleYL[state] - lightAngleYL[light.getCurrentState()]);
+        moveSpot(0,lightAngleZL[state] - lightAngleZL[spotLight.getCurrentState()], lightAngleYL[state] - lightAngleYL[spotLight.getCurrentState()]);
       }
       if (lampNum == 1) {
         moveLamp(1, lowerAngleYR[state] - lowerAngleYR[lamp.getCurrentState()], lowerAngleZR[state] - lowerAngleZR[lamp.getCurrentState()], upperAngleR[state] - upperAngleR[lamp.getCurrentState()], headAngleR[state] - headAngleR[lamp.getCurrentState()]);
       }
     }
-    moveSpot(0, 30, 60);
-    light.render(gl);
+    //moveSpot(0, 30, 60);
+    //spotLight.render(gl);
+    for (Light light: lightList) {
+      light.render(gl);
+
+    }
     lamp.render(gl);
   }
 
   /* Clean up memory, if necessary */
   public void dispose(GLAutoDrawable drawable) {
     GL3 gl = drawable.getGL().getGL3();
-    light.dispose(gl);
+    spotLight.dispose(gl);
     room.dispose(gl);
     table.dispose(gl);
     lamp.dispose(gl);
@@ -199,7 +216,7 @@ public class Hatch_GLEventListener implements GLEventListener {
 
   private void moveSpot(int pose, float angleZ, float angleY){
     double elapsedTime = getSeconds()-startTime;
-    light.moveSpot(pose, angleZ, angleY, elapsedTime);
+    spotLight.moveSpot(pose, angleZ, angleY, elapsedTime);
   }
 
   private void moveCloud(GL3 gl) {

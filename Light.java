@@ -7,15 +7,44 @@ public class Light {
   
   public Material material;
   private Vec3 position;
+
+  public int getPose() {
+    return pose;
+  }
+
+  public void setPose(int pose) {
+    this.pose = pose;
+  }
+
+  private int pose;
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+  }
+
+  private boolean enabled = true;
+  public Vec3 getDirection() {
+    return direction;
+  }
+
+  public void setDirection(Vec3 direction) {
+    this.direction = direction;
+  }
+
+  private Vec3 direction;
   private Mat4 model;
   private Shader shader;
   private Camera camera;
     
   public Light(GL3 gl, int i) {
+
     material = new Material();
-    material.setAmbient(0.8f, 0.8f, 0.8f);
-    material.setDiffuse(0.8f, 0.8f, 0.8f);
-    material.setSpecular(0.8f, 0.8f, 0.8f);
+    material.setAmbient(0.4f, 0.4f, 0.4f);
+    material.setDiffuse(0.4f, 0.4f, 0.4f);
+    material.setSpecular(0.4f, 0.4f, 0.4f);
     position = new Vec3(3f,2f,1f);
     model = new Mat4(1);
     shader = new Shader(gl, "vs_light_01.txt", "fs_light_01.txt");
