@@ -19,22 +19,14 @@ public class Lamp {
     private TransformNode lowerBranchRotateZR, lowerBranchRotateYR, upperBranchRotateR, headRotateR;
     private TransformNode lampMoveTranslate,bulbTransformR,bulbTransformL;
 
-    public Vec3 positionL, positionR;
+    Shader shader;
+    List<Light> lightList;
 
-    public Vec3 getPositionL() {
-        return positionL;
-    }
-
-    public Vec3 getPositionR() {
-        return positionR;
-    }
-    Shader shader;List<Light> lightList;
     public Lamp(GL3 gl, Camera camera,List<Light> lightList, Shader shader, int[] textureId1, int[] textureId2, int[] textureId3,
                 int[] textureId4, int[] textureId5, int[] textureId6, int[] textureId7, int[] textureId8) {
         this.lightList = lightList;
         this.shader = shader;
         Mesh mesh = new Mesh(gl, Sphere.vertices.clone(), Sphere.indices.clone());
-//        shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
         Material material = new Material(new Vec3(1.0f, 0.5f, 0.5f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 50.0f);
         Mat4 modelMatrix = Mat4.multiply(Mat4Transform.scale(4,4,4), Mat4Transform.translate(0,0.5f,0));
         Model snakeBodyL = new Model(gl, camera, lightList, shader, material, modelMatrix, mesh, textureId2, textureId1);
@@ -44,7 +36,6 @@ public class Lamp {
         Model snakeJointL = new Model(gl, camera, lightList, shader, material, modelMatrix, mesh, textureId6, textureId1);
 
         mesh = new Mesh(gl, Cube.vertices.clone(), Cube.indices.clone());
-        //shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
         material = new Material(new Vec3(1.0f, 0.5f, 0.5f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 50.0f);
         modelMatrix = Mat4.multiply(Mat4Transform.scale(4,4,4), Mat4Transform.translate(0,0.5f,0));
         cube = new Model(gl, camera, lightList, shader, material, modelMatrix, mesh, textureId3, textureId4);
@@ -100,9 +91,6 @@ public class Lamp {
         TransformNode makeUpperBranchL = new TransformNode("upper branch transform", m);
         ModelNode upperBranchShapeL = new ModelNode("Sphere(1)", snakeBodyL);
 
-//        positionL.x = 0;
-//        positionL.y = branchLength;
-//        positionL.z = 0;
         TransformNode translateToTop03L = new TransformNode("translate",Mat4Transform.translate(0,branchLength,0));
         headRotateL = new TransformNode("rotate lamp head",Mat4Transform.rotateAroundZ(headAngleL[0]));
         NameNode lampHeadL = new NameNode("lamp head");
@@ -202,8 +190,6 @@ public class Lamp {
         bulbL.addChild(bulbTransformL);
 
         lampRootL.update();  // IMPORTANT - don't forget this
-        //lampRootL.print(0, false);
-        //System.exit(0);
 
         // Right Lamp
 
@@ -346,8 +332,6 @@ public class Lamp {
         f = bulbTransformR.worldTransform.toFloatArrayForGLSL();
         this.lightList.get(3).setPosition(new Vec3(f[12], f[13], f[14]));
         this.lightList.get(3).setDirection(bulbTransformR.worldTransform.getDir());
-        //lampRootR.print(0, false);
-        //System.exit(0);
     }
 
     public boolean animation = false;

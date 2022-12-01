@@ -35,7 +35,6 @@ public class Light {
   }
 
   private Vec3 direction;
-  private Mat4 model;
   private Shader shader;
   private Camera camera;
     
@@ -46,7 +45,6 @@ public class Light {
     material.setDiffuse(0.4f, 0.4f, 0.4f);
     material.setSpecular(0.4f, 0.4f, 0.4f);
     position = new Vec3(3f,2f,1f);
-    model = new Mat4(1);
     shader = new Shader(gl, "vs_light_01.txt", "fs_light_01.txt");
     fillBuffers(gl);
   }

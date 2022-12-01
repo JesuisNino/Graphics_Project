@@ -11,14 +11,9 @@ public class SpotLight extends Light {
     private Mat4 model;
     private Shader shader;
     private Camera camera;
-    private SGNode lightRootL;
-    private TransformNode lightMoveTranslate, rotateNodeZL, rotateNodeYL, lightL;
 
     public SpotLight(GL3 gl, int i) {
         super(gl,i);
-        lightRootL = new NameNode("root");
-        lightMoveTranslate = new TransformNode("lamp transform",Mat4Transform.translate(-5,0,0));
-
         material = new Material();
         material.setAmbient(1f, 1f, 1f);
         material.setDiffuse(1f, 1f, 1f);
@@ -28,16 +23,6 @@ public class SpotLight extends Light {
         model = Mat4.multiply(Mat4Transform.scale(0.3f,0.3f,0.3f), model);
         model = Mat4.multiply(Mat4Transform.translate(position), model);
         shader = new Shader(gl, "vs_light_01.txt", "fs_light_01.txt");
-        lightL = new TransformNode("lightL", model);
-        rotateNodeYL = new TransformNode("rotate left light Y",Mat4Transform.rotateAroundY(0));
-        rotateNodeZL = new TransformNode("rotate left light Z",Mat4Transform.rotateAroundZ(0));
-
-        lightRootL.addChild(lightMoveTranslate);
-        lightMoveTranslate.addChild(rotateNodeYL);
-        rotateNodeYL.addChild(rotateNodeZL);
-        rotateNodeZL.addChild(lightL);
-
-        lightL.update();
 
         fillBuffers(gl);
     }
@@ -83,43 +68,8 @@ public class SpotLight extends Light {
         this.camera = camera;
     }
 
-    public boolean animation = false;
-
-    private int currentState = 0;
-    private int state;
-    private int[] lightAngleZL = {35, 30, -30};
-    private int[] lightAngleYL = {0, 60, -90};
-
-
-    public void setState(int i){
-        this.state=i;
-    }
-
-    public int getCurrentState(){
-        return currentState;
-    }
-
-    public void moveSpot(int lamp, float angleY, float angleZ, double elapsedTime){
-        float rotateAngleZ,rotateAngleY;
-        if (lamp==0 && (float)Math.sin(elapsedTime) < 0.99) {
-            rotateAngleZ = lightAngleZL[currentState] + angleZ * (float) Math.sin(elapsedTime);
-            rotateAngleY = lightAngleYL[currentState] + angleY * (float) Math.sin(elapsedTime);
-            lightRootL.update();
-        }else if (lamp==1 && (float)Math.sin(elapsedTime) < 0.99) {
-
-        }else {
-            currentState = state;
-            animation = false;
-        }
-
-
-            lightRootL.update();
-    }
-
     public void render(GL3 gl) {
 
-        lightRootL.update();
-        lightRootL.draw(gl);
         Mat4 model = new Mat4(1);
         model = Mat4.multiply(Mat4Transform.scale(0.3f,0.3f,0.3f), model);
 

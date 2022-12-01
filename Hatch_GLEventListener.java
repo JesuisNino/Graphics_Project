@@ -70,35 +70,21 @@ public class Hatch_GLEventListener implements GLEventListener {
   private int[] upperAngleR = {100, -10, -30};
   private int[] headAngleR = {-75, -50, 20};
 
-  private int[] lightAngleZL = {35, 30, -30};
-  private int[] lightAngleYL = {0, 60, -90};
 
   public void lampState(int n, int lampNumber) {
     lamp.animation = true;
-    spotLight.animation = true;
     lamp.setState(n);
-    spotLight.setState(n);
     state = n;
     lamp.setLampNum(lampNumber);
     lampNum = lampNumber;
     startTime = getSeconds() - savedTime;
     for (Light light: lightList) {
       light.setPose(n);
-
     }
   }
 
   public void setLight(int lightNum, boolean onoff){
     lightList.get(lightNum).setEnabled(onoff);
-//    if (i == 0){
-////      light_general01.material.setAmbient(0f, 0f, 0f);
-////      light_general01.material.setDiffuse(0f, 0f, 0f);
-////      light_general01.material.setSpecular(0f, 0f, 0f);
-//    }else{
-////      light_general01.material.setAmbient(1f, 1f, 1f);
-////      light_general01.material.setDiffuse(1f, 1f, 1f);
-////      light_general01.material.setSpecular(1f, 1f, 1f);1f
-//    }
   }
   
   // ***************************************************
@@ -180,14 +166,12 @@ public class Hatch_GLEventListener implements GLEventListener {
     if(lamp.animation && (lampNum != lamp.getCurrentLampNum() || lamp.getCurrentState() != state)) {
       if (lampNum == 0) {
         moveLamp(0, lowerAngleYL[state] - lowerAngleYL[lamp.getCurrentState()], lowerAngleZL[state] - lowerAngleZL[lamp.getCurrentState()], upperAngleL[state] - upperAngleL[lamp.getCurrentState()], headAngleL[state] - headAngleL[lamp.getCurrentState()]);
-        moveSpot(0,lightAngleZL[state] - lightAngleZL[spotLight.getCurrentState()], lightAngleYL[state] - lightAngleYL[spotLight.getCurrentState()]);
       }
       if (lampNum == 1) {
         moveLamp(1, lowerAngleYR[state] - lowerAngleYR[lamp.getCurrentState()], lowerAngleZR[state] - lowerAngleZR[lamp.getCurrentState()], upperAngleR[state] - upperAngleR[lamp.getCurrentState()], headAngleR[state] - headAngleR[lamp.getCurrentState()]);
       }
     }
-    //moveSpot(0, 30, 60);
-    //spotLight.render(gl);
+
     for (Light light: lightList) {
       light.render(gl);
 
@@ -212,11 +196,6 @@ public class Hatch_GLEventListener implements GLEventListener {
   private void moveLamp(int pose, float lowerAngleY, float lowerAngleZ, float upperAngle, float headAngle){
     double elapsedTime = getSeconds()-startTime;
     lamp.moveLamp(pose,lowerAngleY,lowerAngleZ,upperAngle,headAngle,elapsedTime);
-  }
-
-  private void moveSpot(int pose, float angleZ, float angleY){
-    double elapsedTime = getSeconds()-startTime;
-    spotLight.moveSpot(pose, angleZ, angleY, elapsedTime);
   }
 
   private void moveCloud(GL3 gl) {
