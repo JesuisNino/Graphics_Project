@@ -23,7 +23,7 @@ public class Table{
 
         Mesh mesh = new Mesh(gl, Cube.vertices.clone(), Cube.indices.clone());
 
-        Material material = new Material(new Vec3(1.0f, 0.5f, 0.31f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 32.0f);
+        Material material = new Material(new Vec3(1.0f, 0.5f, 0.31f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 30.0f);
         Mat4 modelMatrix = Mat4.multiply(Mat4Transform.scale(0.5f,wholeHeight/2,0.5f), Mat4Transform.translate(tableWidth-0.5f,0.5f,tableWidth-0.5f));
         tableLeg1 = new Model(gl, camera, lightList, shader, material, modelMatrix, mesh, textureId1, textureId2);
 

@@ -36,7 +36,7 @@ public class Lamp {
         Model snakeJointL = new Model(gl, camera, lightList, shader, material, modelMatrix, mesh, textureId6, textureId1);
 
         mesh = new Mesh(gl, Cube.vertices.clone(), Cube.indices.clone());
-        material = new Material(new Vec3(1.0f, 0.5f, 0.5f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 50.0f);
+        material = new Material(new Vec3(1.0f, 0.5f, 0.5f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 32.0f);
         modelMatrix = Mat4.multiply(Mat4Transform.scale(4,4,4), Mat4Transform.translate(0,0.5f,0));
         cube = new Model(gl, camera, lightList, shader, material, modelMatrix, mesh, textureId3, textureId4);
         Model snakeHeadL = new Model(gl, camera, lightList, shader, material, modelMatrix, mesh, textureId6, textureId1);
@@ -403,13 +403,13 @@ public class Lamp {
             Vec3 direction =lightTransformL.worldTransform.getDir();
             currentLightXL = direction.x;
             currentLightZL = direction.z;
+            if(this.lightList.get(2).getPose()==1){
+                direction.x = currentLightXL - 0.2f * (float) Math.sin(elapsedTime);
+                direction.z = currentLightZL - 5 * (1-(float) Math.sin(elapsedTime));
+            }
             if(this.lightList.get(2).getPose()==2){
                 direction.x = currentLightXL - 3 * (float) Math.sin(elapsedTime);
                 direction.z = currentLightZL + 3 * (1-(float) Math.sin(elapsedTime));
-            }
-            if(this.lightList.get(2).getPose()==1){
-                direction.x = direction.x - 0.2f * (float) Math.sin(elapsedTime);
-                direction.z = direction.z - 5 * (1-(float) Math.sin(elapsedTime));
             }
             this.lightList.get(2).setDirection(direction);
         }else if (lamp==1 && (float)Math.sin(elapsedTime) < 0.99) {

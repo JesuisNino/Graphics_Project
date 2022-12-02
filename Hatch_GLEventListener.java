@@ -143,10 +143,10 @@ public class Hatch_GLEventListener implements GLEventListener {
     Shader shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
     // Initialise the room, table, egg and lamp
     room = new Room(gl, camera, lightList, textureId7, textureId0,textureSky1);
-    table = new Table(gl, camera, lightList,shader, textureId3, textureId4, textureId9, textureId10);
+    table = new Table(gl, camera, lightList,shader, textureId3, textureId4, textureId7, textureId10);
     egg = new Egg(gl, camera, lightList,shader, textureId1, textureId2);
     lamp = new Lamp(gl, camera, lightList,shader, textureId10, textureId8, textureId12,
-                    textureId11, textureId13, textureId14, textureId15, textureId9, textureId16);
+                    textureId11, textureId13, textureId14, textureId15, textureId7, textureId16);
 
   }
 
