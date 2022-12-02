@@ -17,7 +17,7 @@ public class Lamp {
 
     private TransformNode lowerBranchRotateZL, lowerBranchRotateYL, upperBranchRotateL, headRotateL;
     private TransformNode lowerBranchRotateZR, lowerBranchRotateYR, upperBranchRotateR, headRotateR;
-    private TransformNode lampMoveTranslate,lightTransformR,lightTransformL;
+    private TransformNode lampMoveTranslate,bulbTransformR,lightTransformL;
 
     Shader shader;
     List<Light> lightList;
@@ -293,10 +293,8 @@ public class Lamp {
         m = new Mat4(1);
         m = Mat4.multiply(m, Mat4Transform.scale(0.3f, 0.4f, 0.4f));
         m = Mat4.multiply(m, Mat4Transform.translate(0,0,0));
-        TransformNode bulbTransformR = new TransformNode("eye transform", m);
+        bulbTransformR = new TransformNode("eye transform", m);
         bulbShape = new ModelNode("eye shape", bulb);
-
-        lightTransformR = new TransformNode("eye transform", Mat4Transform.translate(-5,0,0));
 
         lampRootR.addChild(lampMoveTranslate);
         lampMoveTranslate.addChild(lampTranslateR);
@@ -339,15 +337,14 @@ public class Lamp {
         translateToTop09R.addChild(bulbR);
         bulbR.addChild(bulbTransformR);
         bulbTransformR.addChild(bulbShape);
-        bulbShape.addChild(lightTransformR);
 
         lampRootR.update();  // IMPORTANT - don't forget this
         float[] f = lightTransformL.worldTransform.toFloatArrayForGLSL();
         this.lightList.get(2).setPosition(new Vec3(f[12], f[13], f[14]));
         this.lightList.get(2).setDirection(lightTransformL.worldTransform.getDir());
-        f = lightTransformR.worldTransform.toFloatArrayForGLSL();
+        f = bulbTransformR.worldTransform.toFloatArrayForGLSL();
         this.lightList.get(3).setPosition(new Vec3(f[12], f[13], f[14]));
-        this.lightList.get(3).setDirection(lightTransformR.worldTransform.getDir());
+        this.lightList.get(3).setDirection(bulbTransformR.worldTransform.getDir());
     }
 
     public boolean animation = false;
@@ -401,15 +398,58 @@ public class Lamp {
             float[] f = lightTransformL.worldTransform.toFloatArrayForGLSL();
             this.lightList.get(2).setPosition(new Vec3(f[12], f[13], f[14]));
             Vec3 direction =lightTransformL.worldTransform.getDir();
-            currentLightXL = direction.x;
-            currentLightZL = direction.z;
+            if(this.lightList.get(2).getPose()==0){
+                if(currentStateL==1){
+                    // 1 -> 0
+                    direction.x = direction.x + (float) Math.sin(elapsedTime);
+                    direction.z = direction.z - 1+(float) Math.sin(elapsedTime);
+                }else if (currentStateL==2){
+                    // 2 -> 0
+                    if ((float) Math.sin(elapsedTime) < 0.64) {
+                        direction.x = direction.x - (1-(float) Math.sin(elapsedTime));
+                        direction.z = direction.z + (float) Math.sin(elapsedTime);
+                    }else{
+                        direction.x = direction.x + (1-(float) Math.sin(elapsedTime));
+                        direction.z = direction.z + (1-(float) Math.sin(elapsedTime));
+                    }
+                }
+            }
             if(this.lightList.get(2).getPose()==1){
-                direction.x = currentLightXL - 0.2f * (float) Math.sin(elapsedTime);
-                direction.z = currentLightZL - 5 * (1-(float) Math.sin(elapsedTime));
+                if(currentStateL==0){
+                    // 0 -> 1
+                    direction.x = direction.x + 1-(float) Math.sin(elapsedTime);
+                    direction.z = direction.z - (float) Math.sin(elapsedTime);
+                }else if (currentStateL==2){
+                    // 2 -> 1
+                    if ((float) Math.sin(elapsedTime) < 0.5) {
+                        direction.x = direction.x - (1-(float) Math.sin(elapsedTime));
+                        direction.z = direction.z + (float) Math.sin(elapsedTime);
+                    }else{
+                        direction.x = direction.x + (2f-(float) Math.sin(elapsedTime));
+                        direction.z = direction.z + (3-5*(float) Math.sin(elapsedTime));
+                    }
+                }
             }
             if(this.lightList.get(2).getPose()==2){
-                direction.x = currentLightXL - 3 * (float) Math.sin(elapsedTime);
-                direction.z = currentLightZL + 3 * (1-(float) Math.sin(elapsedTime));
+                if(currentStateL==0){
+                    // 0 -> 2
+                    if ((float) Math.sin(elapsedTime) < 0.39) {
+                        direction.x = direction.x + (float) Math.sin(elapsedTime);
+                        direction.z = direction.z + (float) Math.sin(elapsedTime);
+                    }else{
+                        direction.x = direction.x - (float) Math.sin(elapsedTime);
+                        direction.z = direction.z + (1-(float) Math.sin(elapsedTime));
+                    }
+                }else if (currentStateL==1){
+                    // 1 -> 2
+                    if ((float) Math.sin(elapsedTime) < 0.5) {
+                        direction.x = direction.x + 4;
+                        direction.z = direction.z - 0.5f+4* (float) Math.sin(elapsedTime);
+                    }else{
+                        direction.x = direction.x - (float) Math.sin(elapsedTime);
+                        direction.z = direction.z + (1-(float) Math.sin(elapsedTime));
+                    }
+                }
             }
             this.lightList.get(2).setDirection(direction);
         }else if (lamp==1 && (float)Math.sin(elapsedTime) < 0.99) {
@@ -423,14 +463,51 @@ public class Lamp {
             upperBranchRotateR.setTransform(Mat4Transform.rotateAroundZ(rotateAngleUpper));
             headRotateR.setTransform(Mat4Transform.rotateAroundZ(rotateAngleHead));
             lampRootR.update();
-            float[] f = lightTransformR.worldTransform.toFloatArrayForGLSL();
+            float[] f = bulbTransformR.worldTransform.toFloatArrayForGLSL();
             this.lightList.get(3).setPosition(new Vec3(f[12], f[13], f[14]));
-            Vec3 direction =lightTransformR.worldTransform.getDir();
-            if(this.lightList.get(3).getPose()==2){
-                direction.z = -direction.z +0.32f;
+            Vec3 direction = bulbTransformR.worldTransform.getDir();
+            if(this.lightList.get(3).getPose()==0){
+                if(currentStateR==1){
+                    // 1 -> 0
+                    direction.x = direction.x - (float) Math.sin(elapsedTime);
+                    direction.z = direction.z - 1+(float) Math.sin(elapsedTime);
+                }else if (currentStateR==2){
+                    // 2 -> 0
+                    if ((float) Math.sin(elapsedTime) < 0.8) {
+                        direction.x = direction.x + (1-(float) Math.sin(elapsedTime));
+                        direction.z = direction.z - (float) Math.sin(elapsedTime);
+                    }else{
+                        direction.x = direction.x + (1-(float) Math.sin(elapsedTime));
+                        direction.z = direction.z - (1-(float) Math.sin(elapsedTime));
+                    }
+                }
             }
             if(this.lightList.get(3).getPose()==1){
-                direction.z = -direction.z -0.32f;
+                if(currentStateR==0){
+                    // 0 -> 1
+                    direction.x = direction.x - 1-(float) Math.sin(elapsedTime);
+                    direction.z = direction.z - 3*(float) Math.sin(elapsedTime);
+                }else if (currentStateR==2){
+                    // 2 -> 1
+                    direction.x = direction.x + (1-(float) Math.sin(elapsedTime));
+                    direction.z = direction.z - (float) Math.sin(elapsedTime);
+                }
+            }
+            if(this.lightList.get(3).getPose()==2){
+                if(currentStateR==0){
+                    // 0 -> 2
+                    if ((float) Math.sin(elapsedTime) < 0.55) {
+                        direction.x = direction.x - (1-(float) Math.sin(elapsedTime));
+                        direction.z = direction.z - (float) Math.sin(elapsedTime);
+                    }else{
+                        direction.x = direction.x + (float) Math.sin(elapsedTime);
+                        direction.z = direction.z - 3*(1-(float) Math.sin(elapsedTime));
+                    }
+                }else if (currentStateR==1){
+                    // 1 -> 2
+                    direction.x = direction.x + (float) Math.sin(elapsedTime);
+                    direction.z = direction.z - (1-(float) Math.sin(elapsedTime));
+                }
             }
             this.lightList.get(3).setDirection(direction);
 
@@ -443,8 +520,6 @@ public class Lamp {
     }
 
     public void render(GL3 gl) {
-
-
         lampRootL.update();
         lampRootR.update();
         lampRootL.draw(gl);
