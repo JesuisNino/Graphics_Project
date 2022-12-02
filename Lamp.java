@@ -1,14 +1,9 @@
+/* I declare that this code is my own work */
+/* Author Xiaofeng Hu xhu73@sheffield.ac.uk */
+
 import gmaths.*;
 import com.jogamp.opengl.*;
-
 import java.util.List;
-
-/**
- * This class stores the Robot
- *
- * @author    Dr Steve Maddock
- * @version   1.0 (31/08/2022)
- */
 
 public class Lamp {
 
@@ -24,6 +19,7 @@ public class Lamp {
 
     public Lamp(GL3 gl, Camera camera,List<Light> lightList, Shader shader, int[] textureId1, int[] textureId2, int[] textureId3,
                 int[] textureId4, int[] textureId5, int[] textureId6, int[] textureId7, int[] textureId8, int[] textureId9) {
+        // initialise the model for the two lamps
         this.lightList = lightList;
         this.shader = shader;
         Mesh mesh = new Mesh(gl, Sphere.vertices.clone(), Sphere.indices.clone());
@@ -44,6 +40,7 @@ public class Lamp {
         Model baseCube = new Model(gl, camera, lightList, shader, material, modelMatrix, mesh, textureId8, textureId1);
         Model bulb = new Model(gl, camera, lightList, shader, material, modelMatrix, mesh, textureId9, textureId1);
 
+        // Left Lamp
 
         float jointScale = 0.5f;
         float branchLength = 2.5f;
@@ -198,7 +195,7 @@ public class Lamp {
         bulbTransformL.addChild(bulbShape);
         bulbL.addChild(lightTransformL);
 
-        lampRootL.update();  // IMPORTANT - don't forget this
+        lampRootL.update();
 
         // Right Lamp
 
@@ -338,7 +335,9 @@ public class Lamp {
         bulbR.addChild(bulbTransformR);
         bulbTransformR.addChild(bulbShape);
 
-        lampRootR.update();  // IMPORTANT - don't forget this
+        lampRootR.update();
+
+        // Spotlight of two lamps
         float[] f = lightTransformL.worldTransform.toFloatArrayForGLSL();
         this.lightList.get(2).setPosition(new Vec3(f[12], f[13], f[14]));
         this.lightList.get(2).setDirection(lightTransformL.worldTransform.getDir());
@@ -349,7 +348,6 @@ public class Lamp {
 
     public boolean animation = false;
 
-    private float currentLightXL, currentLightZL;
     private int currentStateL = 0, currentStateR = 0;
     private int state,lampNum, currentLampNum;
     private int[] lowerAngleZL = {45, -45, -30};
@@ -385,6 +383,7 @@ public class Lamp {
     public void moveLamp(int lamp, float lowerAngleY, float lowerAngleZ, float upperAngle, float headAngle, double elapsedTime){
         float rotateAngleUpper, rotateAngleHead,rotateAngleLowerZ,rotateAngleLowerY;
         if (lamp==0 && (float)Math.sin(elapsedTime) < 0.99) {
+            // moving the left lamp
             currentLampNum = 0;
             rotateAngleUpper = upperAngleL[currentStateL] + upperAngle * (float) Math.sin(elapsedTime);
             rotateAngleHead = headAngleL[currentStateL] + headAngle * (float) Math.sin(elapsedTime);
@@ -453,6 +452,7 @@ public class Lamp {
             }
             this.lightList.get(2).setDirection(direction);
         }else if (lamp==1 && (float)Math.sin(elapsedTime) < 0.99) {
+            // moving the right lamp
             currentLampNum = 1;
             rotateAngleUpper = upperAngleR[currentStateR] + upperAngle * (float) Math.sin(elapsedTime);
             rotateAngleHead = headAngleR[currentStateR] + headAngle * (float) Math.sin(elapsedTime);

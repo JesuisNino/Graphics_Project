@@ -3,19 +3,15 @@ import com.jogamp.opengl.*;
 
 import java.util.List;
 
-/**
- * This class stores the Robot
- *
- * @author    Dr Steve Maddock
- * @version   1.0 (31/08/2022)
- */
+/* I declare that this code is my own work */
+/* Author Xiaofeng Hu xhu73@sheffield.ac.uk */
 
 public class Table{
 
     private Model base, table, tableLeg1, tableLeg2, tableLeg3, tableLeg4;
 
     public Table(GL3 gl, Camera camera, List<Light> lightList, Shader shader, int[] textureId1, int[] textureId2, int[] textureId3, int[] textureId4) {
-        // table
+        // make table
         float wholeHeight = 5.5f;
         float tableHeight = 0.5f;
         float tableWidth = 4f;

@@ -3,18 +3,15 @@ import com.jogamp.opengl.*;
 
 import java.util.List;
 
-/**
- * This class stores the Robot
- *
- * @author    Dr Steve Maddock
- * @version   1.0 (31/08/2022)
- */
+/* I declare that this code is my own work */
+/* Author Xiaofeng Hu xhu73@sheffield.ac.uk */
 
 public class Room{
 
     private Model floor, window, leftWall, rightWall, frame;
 
     public Room(GL3 gl, Camera camera,  List<Light> light, int[] textureId1, int[] textureId2, int[] textureId3) {
+        // make a room and a moving cloud with window frame
         Mesh mesh = new Mesh(gl, TwoTriangles.vertices.clone(), TwoTriangles.indices.clone());
         Shader shader = new Shader(gl, "vs_tt_05.txt", "fs_tt_05.txt");
         Material material = new Material(new Vec3(0.5f, 0.5f, 0.5f), new Vec3(0.5f, 0.5f, 0.5f), new Vec3(0.3f, 0.3f, 0.3f), 50.0f);
@@ -56,8 +53,6 @@ public class Room{
         rightWall = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId2);
 
     }
-
-
 
     public void render(GL3 gl) {
         floor.render(gl);

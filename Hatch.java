@@ -1,3 +1,6 @@
+/* I declare that this code is my own work */
+/* Author Xiaofeng Hu xhu73@sheffield.ac.uk */
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -42,56 +45,56 @@ public class Hatch extends JFrame implements ActionListener {
     menuBar.add(fileMenu);
 
     JPanel p = new JPanel();
-    p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-      JButton b = new JButton("camera X");
-      b.addActionListener(this);
-      p.add(b);
-      b = new JButton("camera Z");
-      b.addActionListener(this);
-      p.add(b);
-      b = new JButton("Left00");
-      b.addActionListener(this);
-      p.add(b);
-      b = new JButton("Left01");
-      b.addActionListener(this);
-      p.add(b);
-      b = new JButton("Left02");
-      b.addActionListener(this);
-      p.add(b);
-      b = new JButton("Right00");
-      b.addActionListener(this);
-      p.add(b);
-      b = new JButton("Right01");
-      b.addActionListener(this);
-      p.add(b);
-      b = new JButton("Right02");
-      b.addActionListener(this);
-      p.add(b);
-      b = new JButton("Turn on 01");
-      b.addActionListener(this);
-      p.add(b);
-      b = new JButton("Turn off 01");
-      b.addActionListener(this);
-      p.add(b);
+    p.setLayout((new BoxLayout(p, BoxLayout.Y_AXIS)));
+    JPanel p1 = new JPanel();
+    p1.setLayout(new FlowLayout(FlowLayout.LEFT));
+    JButton b = new JButton("Left00");
+    b.addActionListener(this);
+    p1.add(b);
+    b = new JButton("Left01");
+    b.addActionListener(this);
+    p1.add(b);
+    b = new JButton("Left02");
+    b.addActionListener(this);
+    p1.add(b);
+    b = new JButton("Right00");
+    b.addActionListener(this);
+    p1.add(b);
+    b = new JButton("Right01");
+    b.addActionListener(this);
+    p1.add(b);
+    b = new JButton("Right02");
+    b.addActionListener(this);
+    p1.add(b);
+    b = new JButton("Turn on 01");
+    b.addActionListener(this);
+    p1.add(b);
+    b = new JButton("Turn off 01");
+    b.addActionListener(this);
+    p1.add(b);
     b = new JButton("Turn on 02");
     b.addActionListener(this);
-    p.add(b);
+    p1.add(b);
+    JPanel p2 = new JPanel();
+    p2.setLayout(new FlowLayout(FlowLayout.LEFT));
     b = new JButton("Turn off 02");
     b.addActionListener(this);
-    p.add(b);
+    p2.add(b);
     b = new JButton("Turn spotLight off 01");
     b.addActionListener(this);
-    p.add(b);
+    p2.add(b);
     b = new JButton("Turn spotLight on 01");
     b.addActionListener(this);
-    p.add(b);
+    p2.add(b);
     b = new JButton("Turn spotLight off 02");
     b.addActionListener(this);
-    p.add(b);
+    p2.add(b);
     b = new JButton("Turn spotLight on 02");
     b.addActionListener(this);
-    p.add(b);
-    this.add(p, BorderLayout.WEST);
+    p2.add(b);
+    p.add(p1);
+    p.add(p2);
+    this.add(p, BorderLayout.SOUTH);
     
     addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
@@ -101,20 +104,13 @@ public class Hatch extends JFrame implements ActionListener {
         System.exit(0);
       }
     });
+
     animator = new FPSAnimator(canvas, 60);
     animator.start();
   }
   
   public void actionPerformed(ActionEvent e) {
-    if (e.getActionCommand().equalsIgnoreCase("camera X")) {
-      camera.setCamera(Camera.CameraType.X);
-      canvas.requestFocusInWindow();
-    }
-    else if (e.getActionCommand().equalsIgnoreCase("camera Z")) {
-      camera.setCamera(Camera.CameraType.Z);
-      canvas.requestFocusInWindow();
-    }
-    else if (e.getActionCommand().equalsIgnoreCase("Left00")) {
+    if (e.getActionCommand().equalsIgnoreCase("Left00")) {
       glEventListener.lampState(0,0);
     }
     else if (e.getActionCommand().equalsIgnoreCase("Left01")) {

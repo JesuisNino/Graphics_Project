@@ -1,10 +1,12 @@
+/* I declare that this code is my own work */
+/* Author Xiaofeng Hu xhu73@sheffield.ac.uk */
+
 import gmaths.*;
 
 import com.jogamp.opengl.*;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class Hatch_GLEventListener implements GLEventListener {
   
@@ -115,7 +117,7 @@ public class Hatch_GLEventListener implements GLEventListener {
     int[] textureSky1 = TextureLibrary.loadTexture(gl, "textures/cloud.jpg");
     int[] textureId7 = TextureLibrary.loadTexture(gl, "textures/woodenFloor.jpg");
     int[] textureId8 = TextureLibrary.loadTexture(gl, "textures/snake_body.jpg");
-    int[] textureId9 = TextureLibrary.loadTexture(gl, "textures/base.jpg");
+//    int[] textureId9 = TextureLibrary.loadTexture(gl, "textures/base.jpg"); // didn't use, for better performance
     int[] textureId10 = TextureLibrary.loadTexture(gl, "textures/surface_specular.jpg");
     int[] textureId11 = TextureLibrary.loadTexture(gl, "textures/eyes.jpeg");
     int[] textureId12 = TextureLibrary.loadTexture(gl, "textures/snake_body2.jpeg");
@@ -154,12 +156,13 @@ public class Hatch_GLEventListener implements GLEventListener {
 
   private void render(GL3 gl) {
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-//    light.setPosition(getLightPosition());  // changing light position each frame
 
+    // make two general lights (can see the light, but the bulbs are invisible for better performance)
     light_general01.setPosition(8, 11 ,-8);
     light_general01.render(gl);
     light_general02.setPosition(-8, 11 ,8);
     light_general02.render(gl);
+
     room.render(gl);
     moveCloud(gl);
     table.render(gl);
@@ -176,7 +179,6 @@ public class Hatch_GLEventListener implements GLEventListener {
 
     for (Light light: lightList) {
       light.render(gl);
-
     }
     lamp.render(gl);
   }
@@ -204,17 +206,7 @@ public class Hatch_GLEventListener implements GLEventListener {
     double elapsedTime = getSeconds()-startTime;
     room.moveCloud(gl,elapsedTime);
   }
-  
-  // The light's postion is continually being changed, so needs to be calculated for each frame.
-  private Vec3 getLightPosition() {
-    double elapsedTime = getSeconds()-startTime;
-    float x = -5.0f;
-    float y = 2.7f;
-    float z = 0f;
-    return new Vec3(x,y,z);
-  }
 
-  
   // ***************************************************
   /* TIME
    */ 
